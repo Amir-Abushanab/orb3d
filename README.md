@@ -2,7 +2,7 @@
 
 Design a glass orb in your browser, then drop it into your app. Fill it with swirling colours, a picture, a video or a small scene. Give it states for listening, thinking and speaking, and let it respond to audio.
 
-**[Open the studio](https://orb-studio.pages.dev)** · or [run it locally](#from-studio-to-your-app).
+**[Open the studio](https://orb-studio-6ak.pages.dev)** · or [run it locally](#from-studio-to-your-app).
 
 ![Orb Studio showing an animated sunset orb and its controls](assets/hero.webp)
 

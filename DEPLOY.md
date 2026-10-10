@@ -46,7 +46,7 @@ One-time:
    pnpm dlx wrangler pages project create orb-studio --production-branch=main
    ```
 
-Then push to `main`: CI builds and deploys. The live URL is `https://orb-studio.pages.dev`
+Then push to `main`: CI builds and deploys. The live URL is `https://orb-studio-6ak.pages.dev`
 until you add a custom domain.
 
 The deploy preflight checks that both secrets are set and skips the deploy with a notice when
