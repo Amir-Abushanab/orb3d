@@ -1,6 +1,6 @@
 {
   "name": "@orb3d/react-native",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Glass orb with states for React Native, drawn with React Native Skia (3.x on Vulkan and Metal, or 2.x): the <Orb3D> component",
   "keywords": [
     "agent",
