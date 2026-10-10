@@ -1,0 +1,81 @@
+{
+  "name": "@orb3d/react-native",
+  "version": "0.1.0",
+  "description": "Glass orb with states for React Native, drawn with React Native Skia (3.x on Vulkan and Metal, or 2.x): the <Orb3D> component",
+  "keywords": [
+    "agent",
+    "expo",
+    "glass",
+    "orb",
+    "react-native",
+    "skia",
+    "status",
+    "voice"
+  ],
+  "homepage": "https://github.com/Amir-Abushanab/orb3d/tree/main/packages/react-native#readme",
+  "bugs": "https://github.com/Amir-Abushanab/orb3d/issues",
+  "license": "MIT",
+  "author": "Amir Abushanab (https://github.com/Amir-Abushanab)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Amir-Abushanab/orb3d.git",
+    "directory": "packages/react-native"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "react-native": "./src/index.tsx",
+  "exports": {
+    ".": "./src/index.tsx"
+  },
+  "publishConfig": {
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "react-native": "./src/index.tsx",
+        "default": "./dist/index.js"
+      }
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@orb3d/core": "workspace:^"
+  },
+  "devDependencies": {
+    "@shopify/react-native-skia": "^2.14.0",
+    "@types/react": "^19.2.0",
+    "react": "^19.2.3",
+    "react-native": "^0.87.1",
+    "react-native-reanimated": "^4.7.1",
+    "react-native-skia": "3.0.2",
+    "react-native-worklets": "^0.13.0"
+  },
+  "peerDependencies": {
+    "@shopify/react-native-skia": ">=2",
+    "react": ">=19",
+    "react-native": ">=0.78",
+    "react-native-reanimated": ">=4",
+    "react-native-skia": ">=3",
+    "react-native-worklets": ">=0.7"
+  },
+  "peerDependenciesMeta": {
+    "@shopify/react-native-skia": {
+      "optional": true
+    },
+    "react-native-skia": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=20.19"
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "name": "@orb3d/element",
+  "version": "0.1.0",
+  "description": "Drop-in glass orb with states as a custom element: <orb-3d> for Vue, Svelte or plain HTML",
+  "keywords": [
+    "agent",
+    "custom-element",
+    "glass",
+    "orb",
+    "status",
+    "voice",
+    "web-component",
+    "webgl"
+  ],
+  "homepage": "https://github.com/Amir-Abushanab/orb3d/tree/main/packages/element#readme",
+  "bugs": "https://github.com/Amir-Abushanab/orb3d/issues",
+  "license": "MIT",
+  "author": "Amir Abushanab (https://github.com/Amir-Abushanab)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Amir-Abushanab/orb3d.git",
+    "directory": "packages/element"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "./src/index.ts",
+    "./dist/index.js"
+  ],
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "publishConfig": {
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@orb3d/core": "workspace:^"
+  },
+  "engines": {
+    "node": ">=20.19"
+  }
+}

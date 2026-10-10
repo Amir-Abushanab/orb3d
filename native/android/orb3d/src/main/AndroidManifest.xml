@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <!-- GLES 3.0. Not required, so the library does not filter an app's devices: a view on a device
+       without it simply draws nothing. -->
+  <uses-feature android:glEsVersion="0x00030000" android:required="false" />
+</manifest>

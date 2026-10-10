@@ -1,0 +1,41 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "workspaces": {
+    ".": {
+      "ignoreDependencies": ["@tweakpane/core"],
+      "ignoreBinaries": ["swift", "ffmpeg", "img2webp"]
+    },
+    "packages/core": {
+      "entry": ["src/core-loader.ts"],
+      "project": ["src/**/*.ts"]
+    },
+    "packages/react": {
+      "project": ["src/**/*.{ts,tsx}"]
+    },
+    "packages/element": {
+      "project": ["src/**/*.ts"]
+    },
+    "packages/react-native": {
+      "project": ["src/**/*.{ts,tsx}"]
+    },
+    "apps/studio": {
+      "project": ["src/**/*.ts"]
+    }
+  },
+  "include": [
+    "files",
+    "dependencies",
+    "devDependencies",
+    "optionalPeerDependencies",
+    "unlisted",
+    "binaries",
+    "unresolved",
+    "exports",
+    "types",
+    "nsExports",
+    "duplicates"
+  ],
+  "rules": {
+    "duplicates": "warn"
+  }
+}

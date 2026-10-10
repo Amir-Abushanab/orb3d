@@ -1,0 +1,35 @@
+{
+  "name": "orb-studio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Design glass orbs with states in the browser and export them as code, config or stills",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit && vite build",
+    "dev": "vite",
+    "prebuild": "node ../../scripts/ensure-standalone.mjs",
+    "predev": "node ../../scripts/ensure-standalone.mjs",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@codemirror/autocomplete": "^6.20.3",
+    "@codemirror/commands": "^6.11.1",
+    "@codemirror/language": "^6.12.4",
+    "@codemirror/legacy-modes": "^6.5.4",
+    "@codemirror/lint": "^6.9.7",
+    "@codemirror/search": "^6.7.2",
+    "@codemirror/state": "^6.7.6",
+    "@codemirror/view": "^6.43.13",
+    "@lezer/highlight": "^1.2.5",
+    "@orb3d/core": "workspace:*",
+    "tweakpane": "^4.0.5"
+  },
+  "devDependencies": {
+    "@tweakpane/core": "^2.0.5",
+    "vite": "^8.1.0",
+    "vitest": "^4.1.11"
+  }
+}

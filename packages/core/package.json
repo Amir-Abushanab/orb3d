@@ -1,0 +1,84 @@
+{
+  "name": "@orb3d/core",
+  "version": "0.1.0",
+  "description": "Glass orbs with states for the web: the WebGL2 engine, presets and config model behind Orb Studio",
+  "keywords": [
+    "agent",
+    "avatar",
+    "glass",
+    "orb",
+    "refraction",
+    "shader",
+    "status",
+    "tanstack-intent",
+    "voice",
+    "webgl",
+    "webgl2"
+  ],
+  "homepage": "https://github.com/Amir-Abushanab/orb3d/tree/main/packages/core#readme",
+  "bugs": "https://github.com/Amir-Abushanab/orb3d/issues",
+  "license": "MIT",
+  "author": "Amir Abushanab (https://github.com/Amir-Abushanab)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Amir-Abushanab/orb3d.git",
+    "directory": "packages/core"
+  },
+  "files": [
+    "dist",
+    "skills"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts",
+    "./renderer": "./src/renderer/index.ts",
+    "./program": "./src/program/index.ts",
+    "./presets": "./src/presets.ts",
+    "./standalone": "./src/standalone.ts"
+  },
+  "publishConfig": {
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./renderer": {
+        "types": "./dist/renderer/index.d.ts",
+        "default": "./dist/renderer/index.js"
+      },
+      "./program": {
+        "types": "./dist/program/index.d.ts",
+        "default": "./dist/program/index.js"
+      },
+      "./presets": {
+        "types": "./dist/presets.d.ts",
+        "default": "./dist/presets.js"
+      },
+      "./standalone": {
+        "types": "./dist/standalone.d.ts",
+        "default": "./dist/standalone/orb3d.standalone.js"
+      }
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown && pnpm build:standalone",
+    "build:lib": "tsdown --log-level warn",
+    "build:standalone": "vite build --config vite.standalone.config.ts",
+    "skill:stale": "intent stale skills",
+    "skill:validate": "intent validate skills",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@tanstack/intent": "^0.3.6",
+    "vite": "^8.1.0",
+    "vitest": "^4.1.10"
+  },
+  "engines": {
+    "node": ">=20.19"
+  }
+}

@@ -1,0 +1,28 @@
+node_modules/
+dist/
+*.local
+.DS_Store
+.vite/
+.wrangler/
+*.log
+*.tgz
+*.tsbuildinfo
+scratchpad/
+renders/
+
+# SwiftPM's build output for the package at the root (native/apple)
+.build/
+.swiftpm/
+
+# The studio serves the standalone bundle out of its public dir for the embed export; the copy is
+# build output. See scripts/ensure-standalone.mjs.
+apps/studio/public/orb3d.standalone.js
+
+# Local secrets (the Cloudflare deploy values live in GitHub Actions secrets)
+.env
+.env.*
+!.env.example
+
+# Local screenshots used while checking the studio layout
+/drawer-*.png
+/apps/studio/layout-*.png

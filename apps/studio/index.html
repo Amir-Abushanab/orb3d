@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <!-- Favicon: a sunset orb reduced until it still reads at 16px: the sky's gradient, the sea of
+         cloud as one band, and the highlight. -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='s' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%239e1656'/%3E%3Cstop offset='.45' stop-color='%23ff5e1f'/%3E%3Cstop offset='.7' stop-color='%23ffc65c'/%3E%3Cstop offset='1' stop-color='%23d24f74'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='32' cy='32' r='30' fill='url(%23s)'/%3E%3Cpath d='M3 42 Q16 34 26 40 Q36 33 46 39 Q55 35 61 41 A30 30 0 0 1 3 42Z' fill='%23f68e80'/%3E%3Cellipse cx='21' cy='16' rx='9' ry='4.5' transform='rotate(-38 21 16)' fill='%23fff' opacity='.55'/%3E%3Ccircle cx='32' cy='32' r='29.5' fill='none' stroke='%233a0a1e' stroke-opacity='.3'/%3E%3C/svg%3E"
+    />
+    <meta name="theme-color" content="#efedeb" />
+    <title>Orb Studio</title>
+    <meta
+      name="description"
+      content="Design glass orbs with states in the browser and export them as code, config or stills."
+    />
+  </head>
+  <body>
+    <div id="preview-column">
+      <main id="stage" data-backdrop="light">
+        <div id="orb-area"><div id="orb" role="img" aria-label="Orb preview"></div></div>
+        <p id="notice" hidden>Reduced motion is on, so the preview holds still frames.</p>
+        <footer id="dock">
+          <div id="states" role="toolbar" aria-label="States"></div>
+          <div id="level">
+            <label
+              >Level <input id="level-slider" type="range" min="0" max="1" step="0.01" value="0"
+            /></label>
+            <div class="segmented" role="radiogroup" aria-label="Level source">
+              <button type="button" data-mode="manual" aria-pressed="true">Slider</button>
+              <button type="button" data-mode="voice" aria-pressed="false">Voice</button>
+              <button type="button" data-mode="mic" aria-pressed="false">Mic</button>
+            </div>
+            <button type="button" id="cycle" aria-pressed="false" title="Step through the states">
+              Cycle
+            </button>
+          </div>
+          <div class="segmented" id="backdrop" role="radiogroup" aria-label="Backdrop">
+            <button type="button" data-backdrop="light" aria-pressed="true">Light</button>
+            <button type="button" data-backdrop="dark" aria-pressed="false">Dark</button>
+            <button type="button" data-backdrop="checker" aria-pressed="false">Checker</button>
+          </div>
+          <button type="button" id="move-sun" aria-pressed="false">Move sun</button>
+        </footer>
+      </main>
+      <!-- A shader of your own: under the orb, where its lines have room and the orb stays in view. -->
+      <section id="code-drawer" hidden aria-label="Shader">
+        <div class="code-grip" title="Drag to resize"></div>
+        <header class="code-head">
+          <button type="button" class="code-toggle" aria-expanded="true">Shader</button>
+          <span class="code-status" role="status"></span>
+          <span class="code-hint">Compiles as you type · ⌘↵ compiles now</span>
+        </header>
+        <div class="code-editor"></div>
+      </section>
+    </div>
+    <aside id="panel">
+      <header>
+        <h1>Orb Studio</h1>
+        <div class="actions">
+          <div id="history-slot"></div>
+          <button type="button" id="open-export" class="primary">Export</button>
+        </div>
+      </header>
+      <p id="editing"></p>
+      <!-- One scroll for everything under the header, so nothing above the controls stays put. -->
+      <div id="panel-body">
+        <div id="contents-tools" hidden></div>
+        <div id="pane"></div>
+      </div>
+    </aside>
+    <dialog id="export">
+      <form method="dialog">
+        <header>
+          <div class="segmented" id="framework" role="radiogroup" aria-label="Framework">
+            <button type="button" data-framework="react" aria-pressed="true">React</button>
+            <button type="button" data-framework="element" aria-pressed="false">HTML</button>
+            <button type="button" data-framework="vanilla" aria-pressed="false">JS</button>
+            <button type="button" data-framework="cdn" aria-pressed="false">CDN</button>
+            <button type="button" data-framework="react-native" aria-pressed="false">
+              React Native
+            </button>
+            <button type="button" data-framework="swiftui" aria-pressed="false">SwiftUI</button>
+            <button type="button" data-framework="android" aria-pressed="false">
+              Android (preview)
+            </button>
+          </div>
+          <button value="close" aria-label="Close">✕</button>
+        </header>
+        <pre><code id="code"></code></pre>
+        <footer>
+          <button type="button" id="copy-code" class="primary">Copy code</button>
+          <button type="button" id="download-poster">poster.png</button>
+          <button type="button" id="download-config">config.json</button>
+          <button type="button" id="download-program" title="For SwiftUI and Android">
+            program.json
+          </button>
+          <button type="button" id="download-embed">embed.html</button>
+          <button type="button" id="copy-link">Copy share link</button>
+        </footer>
+      </form>
+    </dialog>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

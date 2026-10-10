@@ -1,0 +1,995 @@
+/* Orb Studio. Light, quiet chrome: the orb is the only thing in the room with colour. */
+
+:root {
+  --ink: #1b1a1f;
+  --ink-2: #6d6a75;
+  --ink-3: #9a97a2;
+  --hair: rgb(27 26 31 / 14%);
+  --panel: #fbfafa;
+  --stage: #efedeb;
+  --accent: #e2486a;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+  --panel-w: 320px;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--panel-w);
+  grid-template-rows: minmax(0, 1fr);
+  overflow: hidden;
+  background: var(--stage);
+  color: var(--ink);
+  font: 13px/1.4 var(--sans);
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: 1px solid var(--hair);
+  border-radius: 8px;
+  background: #fff;
+  padding: 5px 10px;
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+button.primary {
+  border-color: transparent;
+  background: var(--ink);
+  color: #fff;
+}
+
+button[aria-pressed="true"] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* The stage ------------------------------------------------------------------------------- */
+
+#preview-column {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+#stage {
+  position: relative;
+  display: grid;
+  /* One column that may be narrower than what is in it: long code scrolls in the editor rather
+     than widening the stage. */
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  row-gap: 20px;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  padding: 32px 32px 28px;
+  transition: background-color 200ms ease;
+}
+
+/* The orb takes the room the dock and the code leave it, square, at most 560px. */
+#orb-area {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 8px;
+  container-type: size;
+}
+
+.sun-handle {
+  position: absolute;
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid rgb(91 68 15 / 40%);
+  border-radius: 50%;
+  background: #fff3ce;
+  color: #705011;
+  font-size: 25px;
+  box-shadow: 0 2px 12px rgb(27 26 31 / 16%);
+  cursor: grab;
+  touch-action: none;
+  transform: translate(-50%, -50%);
+  transition: none;
+}
+
+.sun-handle:active {
+  cursor: grabbing;
+  transform: translate(-50%, -50%);
+}
+
+.sun-help {
+  position: absolute;
+  bottom: 0;
+  margin: 0;
+  padding: 4px 9px;
+  border-radius: 6px;
+  background: var(--panel);
+  color: var(--ink-2);
+  font-size: 11px;
+  pointer-events: none;
+}
+
+#stage[data-backdrop="dark"] {
+  background: #16131a;
+  color: #eceaf0;
+}
+
+#stage[data-backdrop="checker"] {
+  background: repeating-conic-gradient(#e3e1df 0% 25%, #f7f6f4 0% 50%) 50% / 24px 24px;
+}
+
+#orb {
+  position: relative;
+  width: min(100cqw, 100cqh, 560px);
+  aspect-ratio: 1;
+}
+
+#notice {
+  position: absolute;
+  top: 16px;
+  margin: 0;
+  color: var(--ink-2);
+}
+
+#dock {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px 18px;
+  width: 100%;
+}
+
+#states {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.chip {
+  position: relative;
+  border-radius: 99px;
+  padding: 5px 12px;
+}
+
+/* The state the preview is showing, whichever one the panel edits. */
+.chip[data-live]::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  vertical-align: 1px;
+}
+
+.chip .remove {
+  margin-left: 6px;
+  color: var(--ink-3);
+}
+
+.chip .remove:hover {
+  color: var(--accent);
+}
+
+.add {
+  border: 1px dashed var(--hair);
+  border-radius: 99px;
+  background: transparent;
+  padding: 5px 12px;
+}
+
+#level {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#level label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-2);
+}
+
+#stage[data-backdrop="dark"] #level label,
+#stage[data-backdrop="dark"] #notice {
+  color: #a7a3b0;
+}
+
+.segmented {
+  display: inline-flex;
+}
+
+.segmented button {
+  border-radius: 0;
+  margin-left: -1px;
+}
+
+.segmented button:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+.segmented button:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+#stage[data-backdrop="dark"] button:not([aria-pressed="true"]) {
+  border-color: rgb(255 255 255 / 16%);
+  background: #221e27;
+}
+
+#stage[data-backdrop="dark"] button[aria-pressed="true"] {
+  border-color: #eceaf0;
+  background: #eceaf0;
+  color: #16131a;
+}
+
+#stage[data-backdrop="dark"] .add {
+  border-color: rgb(255 255 255 / 22%);
+}
+
+/* The panel ------------------------------------------------------------------------------- */
+
+#panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-left: 1px solid var(--hair);
+  background: var(--panel);
+}
+
+#panel header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 14px 14px 8px;
+}
+
+#panel h1 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+}
+
+/* History: undo, redo and the version list, as one pill in the header ----------------------- */
+
+.hist {
+  position: relative;
+  display: inline-flex;
+}
+
+/* A pill, so the three read as one group rather than three loose glyphs. */
+.hist-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  border: 1px solid rgb(27 26 31 / 18%);
+  border-radius: 9px;
+  background: #fff;
+  padding: 2px;
+}
+
+.hist-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 26px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  padding: 0;
+  color: var(--ink);
+}
+
+.hist-btn:hover:not(.is-disabled) {
+  background: rgb(27 26 31 / 8%);
+}
+
+/* Unavailable, not illegible: the cursor and the tooltip say it; the glyph stays a glyph. */
+.hist-btn.is-disabled {
+  cursor: default;
+  color: var(--ink-3);
+}
+
+.hist-btn.is-disabled:active {
+  transform: none;
+}
+
+.hist-btn.is-active {
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+}
+
+/* Tooltips hang below: the pill sits at the top of the window. */
+.hist-btn[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  top: calc(100% + 7px);
+  left: 50%;
+  z-index: 30;
+  translate: -50% -3px;
+  opacity: 0;
+  pointer-events: none;
+  border-radius: 6px;
+  background: var(--ink);
+  padding: 4px 8px;
+  color: #fff;
+  font-size: 10.5px;
+  white-space: nowrap;
+  transition:
+    opacity 120ms ease,
+    translate 120ms ease;
+}
+
+.hist-btn[data-tip]:hover::after,
+.hist-btn[data-tip]:focus-visible::after {
+  opacity: 1;
+  translate: -50% 0;
+}
+
+.hist-btn.is-active::after {
+  display: none;
+}
+
+/* Hangs from the pill's right edge, over the panel, which is narrower than it is long. */
+.hist-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  width: 248px;
+  max-height: min(56vh, 400px);
+  overflow: hidden;
+  border: 1px solid var(--hair);
+  border-radius: 12px;
+  background: rgb(255 255 255 / 94%);
+  box-shadow: 0 16px 44px -16px rgb(27 26 31 / 45%);
+  backdrop-filter: blur(16px) saturate(1.4);
+}
+
+.hist-panel[hidden] {
+  display: none;
+}
+
+.hist-head {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-bottom: 1px solid var(--hair);
+  padding: 7px 8px 7px 12px;
+  color: var(--ink-3);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.hist-clear {
+  border-radius: 6px;
+  background: transparent;
+  padding: 2px 8px;
+  color: var(--ink-2);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.hist-clear:hover {
+  background: rgb(27 26 31 / 7%);
+  color: var(--ink);
+}
+
+.hist-clear.is-disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.hist-list {
+  flex: 1 1 auto;
+  margin: 0;
+  overflow-y: auto;
+  padding: 4px;
+  list-style: none;
+}
+
+.hist-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  padding: 4px 7px;
+  text-align: left;
+  transition: background-color 100ms ease;
+}
+
+.hist-row:hover {
+  background: rgb(27 26 31 / 6%);
+}
+
+.hist-row:active {
+  transform: none;
+}
+
+.hist-row.is-current {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+/* The orb itself, round on its own transparent corners. */
+.hist-thumb {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgb(27 26 31 / 6%) center / contain no-repeat;
+}
+
+.hist-row.is-current .hist-thumb {
+  box-shadow: 0 0 0 1.5px var(--accent);
+}
+
+.hist-label {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hist-time {
+  flex: 0 0 auto;
+  color: var(--ink-3);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.hist-empty {
+  padding: 10px 12px;
+  color: var(--ink-3);
+}
+
+#editing {
+  margin: 0;
+  padding: 0 14px 10px;
+  color: var(--ink-2);
+}
+
+/* The contents' tools: a source for a picture or clip. */
+#contents-tools {
+  padding: 0 14px 10px;
+}
+
+.tool {
+  display: grid;
+  gap: 6px;
+}
+
+.tool h2 {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.tool input[type="url"] {
+  width: 100%;
+  border: 1px solid var(--hair);
+  border-radius: 8px;
+  background: #fff;
+  padding: 6px 8px;
+}
+
+.tool .row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+#panel-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+#pane {
+  padding: 0 8px 16px;
+  --tp-base-background-color: transparent;
+  --tp-base-shadow-color: transparent;
+  --tp-container-background-color: rgb(27 26 31 / 5%);
+  --tp-container-background-color-hover: rgb(27 26 31 / 9%);
+  --tp-container-background-color-focus: rgb(27 26 31 / 12%);
+  --tp-container-background-color-active: rgb(27 26 31 / 15%);
+  --tp-container-foreground-color: var(--ink);
+  --tp-input-background-color: rgb(27 26 31 / 6%);
+  --tp-input-background-color-hover: rgb(27 26 31 / 10%);
+  --tp-input-background-color-focus: rgb(27 26 31 / 13%);
+  --tp-input-background-color-active: rgb(27 26 31 / 16%);
+  --tp-input-foreground-color: var(--ink);
+  --tp-label-foreground-color: var(--ink-2);
+  --tp-base-font-family: var(--sans);
+  --tp-button-background-color: rgb(27 26 31 / 8%);
+  --tp-button-background-color-hover: rgb(27 26 31 / 12%);
+  --tp-button-background-color-focus: rgb(27 26 31 / 14%);
+  --tp-button-background-color-active: rgb(27 26 31 / 18%);
+  --tp-button-foreground-color: var(--ink);
+  --tp-groove-foreground-color: rgb(27 26 31 / 10%);
+}
+
+/* Export ---------------------------------------------------------------------------------- */
+
+dialog {
+  width: min(720px, 92vw);
+  border: 1px solid var(--hair);
+  border-radius: 14px;
+  padding: 0;
+  box-shadow: 0 24px 60px rgb(0 0 0 / 18%);
+}
+
+dialog::backdrop {
+  background: rgb(27 26 31 / 30%);
+}
+
+dialog header,
+dialog footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px;
+}
+
+dialog footer {
+  justify-content: flex-start;
+  border-top: 1px solid var(--hair);
+}
+
+dialog pre {
+  max-height: 55vh;
+  margin: 0;
+  overflow: auto;
+  border-top: 1px solid var(--hair);
+  background: #f6f5f3;
+  padding: 14px;
+  font: 12px/1.5 var(--mono);
+}
+
+#toast {
+  position: fixed;
+  bottom: 20px;
+  left: calc((100vw - var(--panel-w)) / 2);
+  translate: -50% 8px;
+  opacity: 0;
+  pointer-events: none;
+  border-radius: 99px;
+  background: var(--ink);
+  color: #fff;
+  padding: 8px 14px;
+  transition:
+    opacity 160ms ease,
+    translate 160ms ease;
+}
+
+#toast[data-show] {
+  opacity: 1;
+  translate: -50% 0;
+}
+
+/* The shader drawer, flush with the stage's bottom edge ---------------------------------------- */
+
+#code-drawer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  justify-self: stretch;
+  border-top: 1px solid var(--hair);
+  background: var(--panel);
+  color: var(--ink);
+}
+
+#code-drawer[hidden] {
+  display: none;
+}
+
+/* The top edge drags: a strip a little taller than the border, so it is easy to catch. */
+.code-grip {
+  position: absolute;
+  top: -4px;
+  right: 0;
+  left: 0;
+  height: 8px;
+  cursor: ns-resize;
+  touch-action: none;
+}
+
+#code-drawer[data-open="false"] .code-grip {
+  cursor: default;
+}
+
+.code-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 20px;
+}
+
+.code-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  background: transparent;
+  padding: 2px 0;
+  font-weight: 600;
+}
+
+.code-toggle::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  rotate: 45deg;
+  translate: 0 -2px;
+  transition: rotate 160ms ease;
+}
+
+#code-drawer[data-open="false"] .code-toggle::before {
+  rotate: -135deg;
+  translate: 0 2px;
+}
+
+.code-toggle:active {
+  transform: none;
+}
+
+.code-status {
+  color: var(--ink-2);
+  font-size: 12px;
+}
+
+.code-status[data-state="ok"]::before,
+.code-status[data-state="error"]::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: #2f9e6a;
+}
+
+.code-status[data-state="error"] {
+  color: #a3123a;
+}
+
+.code-status[data-state="error"]::before {
+  background: #d0342c;
+}
+
+.code-hint {
+  margin-left: auto;
+  color: var(--ink-3);
+  font-size: 12px;
+}
+
+/* At most a little under half the window, so a short window still shows the orb above it. */
+.code-editor {
+  height: min(var(--code-height, 260px), 42vh);
+  min-height: 0;
+  border-top: 1px solid var(--hair);
+  overflow: hidden;
+}
+
+#code-drawer[data-open="false"] .code-editor {
+  display: none;
+}
+
+/* A short window: tighter round the edges, and less of it to the code, so the orb keeps its room. */
+@media (max-height: 640px) and (min-width: 761px) {
+  #stage {
+    row-gap: 14px;
+    padding: 20px 28px 20px;
+  }
+
+  .code-editor {
+    height: min(var(--code-height, 260px), 34vh);
+  }
+}
+
+@media (max-width: 760px) {
+  /* Only the showcase sticks. The shader and settings share the page scroll below it. */
+  html,
+  body {
+    height: auto;
+  }
+
+  html {
+    scroll-padding-top: calc(min(460px, 55svh) + 12px);
+  }
+
+  body {
+    display: block;
+    min-height: 100svh;
+    overflow: visible;
+  }
+
+  #preview-column {
+    display: contents;
+  }
+
+  #stage {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    height: min(460px, 55svh);
+    row-gap: 10px;
+    padding: 12px 16px;
+    background: var(--stage);
+    border-bottom: 1px solid var(--hair);
+  }
+
+  #orb-area {
+    padding: 4px;
+  }
+
+  #orb {
+    width: min(100cqw, 100cqh, 360px);
+  }
+
+  #stage #orb[data-weather-view="sky"],
+  #stage #orb[data-weather-view="overlay"] {
+    width: min(100cqw, calc(100cqh * 16 / 9), 900px);
+  }
+
+  #dock {
+    gap: 8px 12px;
+  }
+
+  #level {
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 100%;
+  }
+
+  #level-slider {
+    width: 90px;
+  }
+
+  .code-head {
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    padding-inline: 16px;
+  }
+
+  #panel {
+    border-left: 0;
+    border-top: 1px solid var(--hair);
+  }
+
+  #panel-body {
+    overflow: visible;
+  }
+
+  #toast {
+    left: 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
+
+/* Shared solid / stop-gradient / mesh colour picker. */
+.color-launch {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  height: 22px;
+  padding: 0 4px;
+  border: 0;
+  background: #eae8e8;
+  border-radius: 4px;
+  font: 11px var(--mono);
+}
+.color-launch canvas {
+  width: 34px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1px solid var(--hair);
+}
+.color-launch span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.color-editor {
+  position: fixed;
+  inset: auto;
+  width: 328px;
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 24px);
+  overflow: auto;
+  margin: 0;
+  padding: 14px;
+  border: 1px solid var(--hair);
+  border-radius: 12px;
+  background: var(--panel);
+  color: var(--ink);
+  box-shadow: 0 8px 32px rgb(27 26 31 / 20%);
+  font: 12px/1.4 var(--sans);
+}
+.color-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.color-heading button {
+  padding: 0 6px;
+  border: 0;
+  font-size: 20px;
+  background: transparent;
+}
+.color-editor select {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--hair);
+  border-radius: 6px;
+  background: #fff;
+  margin-bottom: 12px;
+  color: var(--ink);
+}
+.color-field {
+  position: relative;
+  height: 174px;
+  border-radius: 8px;
+  border: 1px solid var(--hair);
+  touch-action: none;
+  margin: 0 8px 12px;
+  cursor: crosshair;
+}
+.color-field canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 7px;
+}
+.color-point {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  padding: 0;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 1px 5px rgb(0 0 0 / 55%);
+  touch-action: none;
+  cursor: grab;
+}
+.color-point:active {
+  transform: translate(-50%, -50%);
+  cursor: grabbing;
+}
+.color-point[aria-pressed="true"] {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+.color-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 12px;
+}
+.color-row input[type="color"] {
+  width: 36px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--hair);
+  border-radius: 4px;
+  background: none;
+}
+.color-hex {
+  width: 100%;
+  min-width: 0;
+  padding: 5px 7px;
+  border: 1px solid var(--hair);
+  border-radius: 5px;
+  font: 12px var(--mono);
+}
+.color-row button {
+  padding: 3px 8px;
+}
+.color-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+}
+.color-controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  color: var(--ink-2);
+}
+.color-controls input {
+  width: 100%;
+  padding: 5px 7px;
+  border: 1px solid var(--hair);
+  border-radius: 5px;
+  background: #fff;
+  font: 12px var(--mono);
+}
+.color-help {
+  margin: 12px 0 0;
+  color: var(--ink-2);
+  font-size: 11px;
+}
+
+#orb[data-weather-view="sky"],
+#orb[data-weather-view="overlay"] {
+  width: min(100cqw, 900px);
+  aspect-ratio: 16 / 9;
+}
