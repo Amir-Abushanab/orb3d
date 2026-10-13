@@ -1,6 +1,6 @@
 {
   "name": "@orb3d/element",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Drop-in glass orb with states as a custom element: <orb-3d> for Vue, Svelte or plain HTML",
   "keywords": [
     "agent",
