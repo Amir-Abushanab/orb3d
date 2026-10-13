@@ -73,6 +73,7 @@ describe("spherical rain", () => {
       const dials = program.states.idle!.dials;
       const rain = createRain(program);
       let largest = 0,
+        rise = 0,
         detached = false;
       for (let k = 0; k < 1800; k++) {
         const before = [...rain.live];
@@ -81,9 +82,10 @@ describe("spherical rain", () => {
           detached ||= rain.live[i] === 3;
           if (rain.live[i] !== 1) continue;
           largest = Math.max(largest, rain.goal[i]!);
-          if (before[i] === 1) expect(rain.y[i]!).toBeLessThanOrEqual(rain.py[i]! + 0.00001);
+          if (before[i] === 1) rise = Math.max(rise, rain.y[i]! - rain.py[i]!);
         }
       }
+      expect(rise).toBeLessThanOrEqual(0.00001);
       expect(largest).toBeLessThan(0.18);
       expect(detached).toBe(true);
     },
