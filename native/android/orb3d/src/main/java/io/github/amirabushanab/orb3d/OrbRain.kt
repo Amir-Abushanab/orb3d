@@ -319,6 +319,8 @@ internal class OrbRain(private var program: OrbProgram) {
       } else { vx[i] = vx[i] * 0.65; vy[i] = vy[i] * 0.65; vz[i] = vz[i] * 0.65 }
       val radial = vx[i] * sx + vy[i] * sy + vz[i] * sz
       vx[i] = vx[i] - radial * sx; vy[i] = vy[i] - radial * sy; vz[i] = vz[i] - radial * sz
+      // Glass adhesion dissipates wind/contact impulses that push attached water uphill.
+      if (vx[i] * gx + vy[i] * gy < 0) { vx[i] = 0.0; vy[i] = 0.0; vz[i] = 0.0 }
       val v = sqrt(vx[i] * vx[i] + vy[i] * vy[i] + vz[i] * vz[i]); val limit = min(1.0, TOP / max(v, 0.000001))
       vx[i] = vx[i] * limit; vy[i] = vy[i] * limit; vz[i] = vz[i] * limit
       sx += vx[i] * motion; sy += vy[i] * motion; sz += vz[i] * motion
@@ -357,19 +359,21 @@ internal class OrbRain(private var program: OrbProgram) {
           }
         }
       }
+    }
+    for (i in 0 until DROPS) {
+      if (live[i] == 1 && pair[i] >= 0) coalesce(i)
+      if (!active(i, amount, n)) continue
       if (pair[i] >= 0) continue
-      if (x[i] * gx + y[i] * gy > 0.96) {
+      val overloaded = goal[i] > 0.14
+      if (overloaded || x[i] * gx + y[i] * gy > 0.96) {
         age[i] = age[i] + 1
-        if (goal[i] > 0.075 || age[i] > 90) {
+        if (overloaded || goal[i] > 0.075 || age[i] > 90) {
           live[i] = 3
           val along = vx[i] * gx + vy[i] * gy
           vx[i] = vx[i] + gx * (0.006 - along); vy[i] = vy[i] + gy * (0.006 - along)
           release(i)
         }
       } else if (z[i] < 0.04) { live[i] = 0; release(i) }
-    }
-    for (i in 0 until DROPS) {
-      if (live[i] == 1 && pair[i] >= 0) coalesce(i)
     }
     contactHead.fill(-1)
     var maxRadius = 0.0

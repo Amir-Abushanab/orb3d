@@ -56,6 +56,38 @@ function runoffDistance(run: number): number {
 }
 
 describe("spherical rain", () => {
+  it.each([-65, 0, 65])(
+    "drains dense rain with gravity under %s° crosswind without a giant collector",
+    (wind) => {
+      const program = compileOrb({
+        weather: {
+          gravity: 0,
+          wind,
+          windSpeed: 12,
+          gusts: 20,
+          turbulence: 0.45,
+          rain: { enabled: true, density: 1, size: 1.8, run: 1.8, spawn: 0.5 },
+        },
+        states: { idle: {} },
+      });
+      const dials = program.states.idle!.dials;
+      const rain = createRain(program);
+      let largest = 0,
+        detached = false;
+      for (let k = 0; k < 1800; k++) {
+        const before = [...rain.live];
+        stepRain(rain, program, dials, (k + 1) / 60, 1.8);
+        for (let i = 0; i < rain.live.length; i++) {
+          detached ||= rain.live[i] === 3;
+          if (rain.live[i] !== 1) continue;
+          largest = Math.max(largest, rain.goal[i]!);
+          if (before[i] === 1) expect(rain.y[i]!).toBeLessThanOrEqual(rain.py[i]! + 0.00001);
+        }
+      }
+      expect(largest).toBeLessThan(0.18);
+      expect(detached).toBe(true);
+    },
+  );
   it("makes maximum runoff visibly faster while zero runoff leaves the drop pinned", () => {
     expect(runoffDistance(0)).toBe(0);
     const normal = runoffDistance(1);

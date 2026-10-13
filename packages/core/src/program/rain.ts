@@ -624,6 +624,13 @@ export function stepRain(
     rain.vx[i] = rain.vx[i]! - radial * x;
     rain.vy[i] = rain.vy[i]! - radial * y;
     rain.vz[i] = rain.vz[i]! - radial * z;
+    // Incoming wind and a glancing merge can supply an uphill impulse. Glass adhesion
+    // dissipates that impact: attached water must drain with the selected gravity.
+    if (rain.vx[i]! * gx + rain.vy[i]! * gy < 0) {
+      rain.vx[i] = 0;
+      rain.vy[i] = 0;
+      rain.vz[i] = 0;
+    }
     const v = Math.sqrt(
       rain.vx[i]! * rain.vx[i]! + rain.vy[i]! * rain.vy[i]! + rain.vz[i]! * rain.vz[i]!,
     );
@@ -697,11 +704,17 @@ export function stepRain(
         }
       }
     }
+  }
+  for (let i = 0; i < RAIN_DROPS; i++) {
+    if (rain.live[i] === 1 && rain.pair[i]! >= 0) coalesce(rain, i);
+    // Release after neck completion and before another contact can capture the head.
+    if (!active(rain, i, amount, count)) continue;
     // Surface tension holds a small pendant drop at the downstream pole until water collects.
     if (rain.pair[i]! >= 0) continue;
-    if (rain.x[i]! * gx + rain.y[i]! * gy > 0.96) {
+    const overloaded = rain.goal[i]! > 0.14;
+    if (overloaded || rain.x[i]! * gx + rain.y[i]! * gy > 0.96) {
       rain.age[i] = rain.age[i]! + 1;
-      if (rain.goal[i]! > 0.075 || rain.age[i]! > 90) {
+      if (overloaded || rain.goal[i]! > 0.075 || rain.age[i]! > 90) {
         rain.live[i] = 3;
         const along = rain.vx[i]! * gx + rain.vy[i]! * gy;
         rain.vx[i] = rain.vx[i]! + gx * (0.006 - along);
@@ -712,9 +725,6 @@ export function stepRain(
       rain.live[i] = 0;
       release(rain, i);
     }
-  }
-  for (let i = 0; i < RAIN_DROPS; i++) {
-    if (rain.live[i] === 1 && rain.pair[i]! >= 0) coalesce(rain, i);
   }
   // All drops have moved before contacts are tested. A reusable grid rejects far-away pairs;
   // bit masks visit candidates in the same i/j order as the original full pair scan.
