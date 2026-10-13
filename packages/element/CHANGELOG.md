@@ -1,5 +1,12 @@
 # @orb3d/element
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies [[`1aad5d4`](https://github.com/Amir-Abushanab/orb3d/commit/1aad5d492a3837eac98811e584fbacca78584074)]:
+  - @orb3d/core@0.2.1
+
 ## 0.2.0
 
 ### Patch Changes

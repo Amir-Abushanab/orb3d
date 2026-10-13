@@ -1,5 +1,13 @@
 # @orb3d/core
 
+## 0.2.1
+
+### Patch Changes
+
+- [#3](https://github.com/Amir-Abushanab/orb3d/pull/3) [`1aad5d4`](https://github.com/Amir-Abushanab/orb3d/commit/1aad5d492a3837eac98811e584fbacca78584074) Thanks [@Amir-Abushanab](https://github.com/Amir-Abushanab)! - Give cloudy and overcast weather layered drift, billowing contours and thickness-based lighting.
+  API observations now drive cloud drift with crosswind while preserving cloud positions across
+  weather refreshes. Calm skies retain gentle motion, and reduced motion freezes both cloud layers.
+
 ## 0.2.0
 
 ### Minor Changes
