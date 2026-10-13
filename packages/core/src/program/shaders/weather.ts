@@ -5,14 +5,30 @@ float weatherWind($U float time) {
   float envelope = 0.5 + 0.28 * sin(time * 0.73) + 0.22 * sin(time * 1.37 + 1.9);
   return $D(weather.windSpeed) + max(0.0, $D(weather.gusts) - $D(weather.windSpeed)) * envelope * $D(weather.turbulence);
 }
-float cloudDensity($U vec2 p, float time) {
+// Two independently advected decks. Keep the unthresholded body for lighting: a fully covered
+// sky still has thickness, crowns and shadow, even when its silhouette fills the whole view.
+vec3 cloudField($U vec2 p) {
   float motion = 1.0 - $D(weather.reducedMotion);
-  vec2 travel = vec2(uData[2].w + uData[2].z * 0.002, time * 0.002) * motion;
-  vec2 q = (p - vec2(0.0, $D(weather.clouds.height))) * (2.0 / $D(weather.clouds.scale)) - travel;
-  float broad = fbm(q, 5);
-  float wisps = fbm(q * 2.7 + vec2(13.2, 9.6), 3);
-  float threshold = mix(0.92, 0.13, $D(weather.clouds.coverage));
-  return smoothstep(threshold - 0.12, threshold + 0.16, broad + wisps * 0.16);
+  // The signed cloud clock integrates direction changes instead of moving the whole field
+  // when an API refresh changes wind. The wind clock adds gradual turbulent evolution.
+  vec2 travel = vec2(uData[2].w * 1.8, uData[2].w * 0.12) * motion;
+  float evolution = (uData[2].w * 1.6 + uData[2].z * 0.006) * motion;
+  vec2 q = (p - vec2(0.0, $D(weather.clouds.height))) * (2.2 / $D(weather.clouds.scale));
+  vec2 billow = vec2(sin(q.y*1.7 + evolution), sin(q.x*1.4 - evolution*0.8 + 2.3));
+  billow *= 0.16 + $D(weather.turbulence) * 0.24;
+  float body = fbm(q - travel + billow, 3);
+  float detail = fbm(q*3.1 - travel*1.18 + vec2(13.2,9.6) + evolution*0.12, 2);
+  float distant = fbm(q*0.7 - travel*0.38 + vec2(7.8,21.3), 3);
+  return vec3(body + (detail-0.375)*0.22, distant, body);
+}
+float cloudMask($U float body) {
+  float threshold = mix(0.78, 0.3, $D(weather.clouds.coverage));
+  return smoothstep(threshold-0.08, threshold+0.1, body);
+}
+float cloudDensity($U vec2 p) {
+  vec3 field = cloudField($u p);
+  float deck = smoothstep(0.55,1.0,$D(weather.clouds.coverage));
+  return deck*(0.3+field.y*0.7) + cloudMask($u field.x)*(0.35+field.x*1.1);
 }
 // One pulse per seeded interval; never a rapid sequence of strobe flashes.
 vec3 stormEvent($U float time) {
@@ -99,12 +115,21 @@ vec4 weatherSky($U vec4 c, vec2 p, float px, vec4 clock) {
   float daylight = $DAYLIGHT;
   $IF(clouds)
   if ($D(weather.clouds.coverage) > 0.0) {
-    float density = cloudDensity($u p, clock.x);
-    float lit = cloudDensity($u p + lightDir($u).xy * 0.085, clock.x);
-    float optical = density * (1.0 + 4.0 * $D(weather.clouds.density));
+    vec3 field = cloudField($u p);
+    vec3 lit = cloudField($u p + lightDir($u).xy * 0.075);
+    float thickness = $D(weather.clouds.density);
+    float deck = smoothstep(0.55,1.0,$D(weather.clouds.coverage));
+    float distantOpacity = 1.0-exp(-deck*(0.65+thickness*2.0)*(0.45+field.y*1.1));
+    float distantLight = sat(0.58+(lit.y-field.y)*2.0+(0.5-field.y)*0.55);
+    vec3 distant = mix($C(weather.clouds.shade),$C(weather.clouds.color),distantLight);
+    c = over(c,distant*mix(0.22,1.0,daylight),distantOpacity);
+    float mask = cloudMask($u field.x);
+    float optical = mask * (0.7+3.5*thickness) * (0.35+field.x*1.1);
     float opacity = 1.0 - exp(-optical);
-    float silver = sat((density - lit) * 5.0);
-    vec3 cloud = mix($C(weather.clouds.shade), $C(weather.clouds.color), 0.42 + silver * 0.45 + (1.0-density)*0.2);
+    float sculpt = sat(0.64+(lit.z-field.z)*2.4+(0.5-field.z)*0.7-thickness*0.1);
+    float silver = sat((field.z-lit.z)*4.0)*(1.0-mask)*daylight;
+    vec3 cloud = mix($C(weather.clouds.shade),$C(weather.clouds.color),sculpt);
+    cloud += $C(light.color)*silver*0.18;
     cloud *= mix(0.22, 1.0, daylight);
     c = over(c, cloud, opacity);
   }

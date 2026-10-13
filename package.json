@@ -11,6 +11,7 @@
     "build:packages": "pnpm -r --filter \"@orb3d/*\" build",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm depcruise && pnpm knip && pnpm skill:validate && pnpm native:check",
     "climate:frames": "pnpm --filter @orb3d/core build:lib && node scripts/climate-effects.mjs",
+    "cloud:frames": "pnpm --filter @orb3d/core build:lib && node scripts/cloud-effects.mjs",
     "color:frames": "pnpm --filter @orb3d/core build:lib && node scripts/color-effects.mjs",
     "depcruise": "dependency-cruiser apps packages scripts",
     "dev": "pnpm --filter orb-studio dev",
