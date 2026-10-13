@@ -1,6 +1,6 @@
 {
   "name": "@orb3d/core",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Glass orbs with states for the web: the WebGL2 engine, presets and config model behind Orb Studio",
   "keywords": [
     "agent",
