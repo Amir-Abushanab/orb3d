@@ -14,7 +14,7 @@ description: >
 metadata:
   type: core
   library: "@orb3d/core"
-  library_version: "0.2.1"
+  library_version: "0.2.2"
 sources:
   - "Amir-Abushanab/orb3d:README.md"
   - "Amir-Abushanab/orb3d:packages/core/README.md"
