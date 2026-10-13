@@ -44,6 +44,33 @@ describe("weather observations", () => {
     expect(east.weather?.wind).toBeGreaterThan(0);
     expect(west.weather?.gravity).toBe(0);
   });
+  it("keeps calm clouds moving and carries them with observed crosswind", () => {
+    const calm = weatherState({ windSpeed: 0 });
+    const west = weatherState({ windDirection: 270, windSpeed: 10 }, { bearing: 180 });
+    const east = weatherState({ windDirection: 90, windSpeed: 10 }, { bearing: 180 });
+    expect(calm.weather?.clouds?.speed).toBeGreaterThan(0);
+    expect(west.weather?.clouds?.speed).toBeLessThan(0);
+    expect(east.weather?.clouds?.speed).toBeGreaterThan(calm.weather!.clouds!.speed!);
+    expect(Math.abs(west.weather!.clouds!.speed!)).toBe(east.weather?.clouds?.speed);
+  });
+  it("preserves the cloud field when a provider refresh reverses the wind", () => {
+    const observation = { solarElevation: 30, cloudCover: 1, windSpeed: 10 };
+    const runtime = new OrbRuntime(
+      compileOrb(weatherConfig({ ...observation, windDirection: 90 })),
+    );
+    runtime.seek(8);
+    const before = [...runtime.write(256, 256)];
+    runtime.setProgram(
+      compileOrb(weatherConfig({ ...observation, windDirection: 270 })),
+      "idle",
+      true,
+    );
+    expect([...runtime.write(256, 256)]).toEqual(before);
+    runtime.advance(3);
+    const drift = runtime.snapshot().clock[7]!;
+    runtime.advance(1);
+    expect(runtime.snapshot().clock[7]).toBeLessThan(drift);
+  });
   it("normalizes invalid inputs and cannot make gusts weaker than wind", () => {
     const w = normalizeWeather({
       cloudCover: 9,

@@ -195,7 +195,14 @@ export function weatherState(
         size: 0.55 + icy * 0.8,
         melt: clamp(heat / 18, 0, 1),
       },
-      clouds: { enabled: true, coverage: w.cloudCover, density: 0.35 + w.cloudCover * 0.55 },
+      clouds: {
+        enabled: true,
+        coverage: w.cloudCover,
+        density: 0.35 + w.cloudCover * 0.55,
+        // A calm sky still evolves; crosswind carries it in the same direction as precipitation.
+        // This rate is integrated, so provider refreshes preserve the clouds' current position.
+        speed: (crosswind < 0 ? -1 : 1) * (0.04 + Math.min(40, Math.abs(crosswind)) * 0.004),
+      },
       atmosphere: {
         enabled: true,
         amount: clamp(1 - w.visibility / 25000, 0, 1),

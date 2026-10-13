@@ -618,7 +618,7 @@ vec4 fogOver($U vec4 c, vec2 face, float fog, float px) {
 // by the reflected light, with moving water supplying its shared meniscus normal.
 vec4 sunny($U vec4 c, vec2 face, float px, float level, vec4 water) {
   float amount = sat($D(sunny.amount) + $D(react.sunny) * level);
-  $IF(clouds) amount *= exp(-cloudDensity($u face,uData[1].x) * $D(weather.clouds.density) * 3.0); $END
+  $IF(clouds) amount *= exp(-cloudDensity($u face) * $D(weather.clouds.density) * 3.0); $END
   if (amount <= 0.0) return c;
   vec3 sun = $C(sunny.color);
   vec2 light = vec2($D(light.x), $D(light.y));

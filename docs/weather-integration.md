@@ -81,6 +81,13 @@ needs their landing slots; the liquid volume is conserved and the patches gradua
 Glaze/rime accumulates independently, stays after incoming precipitation stops, and thaws over
 time. A hard `enabled: false` hides and pauses an effect; amount zero permits natural cleanup.
 
+Cloud cover controls how much sky is covered, while thickness controls light transmission.
+Overcast skies retain a slower distant deck and billowing foreground crowns instead of flattening
+into one opaque colour. Observed crosswind sets the signed cloud drift; calm weather retains
+gentle motion. Drift is integrated through API refreshes, so direction and speed changes carry
+the existing clouds onward. Manual **Clouds → Drift** still controls motion for authored scenes;
+`reducedMotion` freezes both decks and their billowing.
+
 ## Optional Open-Meteo adapter
 
 `fromOpenMeteo(row, location)` demonstrates a provider adapter without choosing a provider
@@ -131,5 +138,7 @@ and equivalent weather runtimes. Native hosts can compile/export states with `we
 and transition their `OrbRuntime`; the TypeScript provider adapters run in the web/JS host.
 
 Validation: `pnpm climate:frames` captures twelve representative cases and a second-page sunset;
+`pnpm cloud:frames` checks API-driven scattered, cloudy and overcast skies for visible motion,
+cloud definition, reduced motion and WebGL/SkSL parity;
 `pnpm parity --metal --only climate-clouds,climate-overcast,climate-night,climate-storm,climate-hail,climate-ice,climate-rime,climate-hero,climate-overlay,sunset`
 checks the portable shaders. No performance benchmark is part of this change.
