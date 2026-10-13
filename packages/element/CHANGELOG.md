@@ -1,5 +1,13 @@
 # @orb3d/element
 
+## 0.2.2
+
+### Patch Changes
+
+- [#5](https://github.com/Amir-Abushanab/orb3d/pull/5) [`2ffe72f`](https://github.com/Amir-Abushanab/orb3d/commit/2ffe72fac8cb526dbe3af3392aa0ff6f75b0c966) Thanks [@Amir-Abushanab](https://github.com/Amir-Abushanab)! - Keep attached raindrops draining with gravity after wind impacts and contact merges. Release overloaded drops from the glass before dense rain can feed a single oversized collector. Apply the same simulation fix on the web, React Native, Swift and Android.
+- Updated dependencies [[`2ffe72f`](https://github.com/Amir-Abushanab/orb3d/commit/2ffe72fac8cb526dbe3af3392aa0ff6f75b0c966)]:
+  - @orb3d/core@0.2.2
+
 ## 0.2.1
 
 ### Patch Changes
