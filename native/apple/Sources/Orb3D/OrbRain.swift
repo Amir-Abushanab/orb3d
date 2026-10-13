@@ -320,6 +320,8 @@ final class OrbRain {
             } else { vx[i] = vx[i] * 0.65; vy[i] = vy[i] * 0.65; vz[i] = vz[i] * 0.65 }
             let radial = vx[i] * sx + vy[i] * sy + vz[i] * sz
             vx[i] = vx[i] - radial * sx; vy[i] = vy[i] - radial * sy; vz[i] = vz[i] - radial * sz
+            // Glass adhesion dissipates wind/contact impulses that push attached water uphill.
+            if vx[i] * gx + vy[i] * gy < 0 { vx[i] = 0; vy[i] = 0; vz[i] = 0 }
             let v = sqrt(vx[i] * vx[i] + vy[i] * vy[i] + vz[i] * vz[i])
             let limit = min(1, top / max(v, 0.000001))
             vx[i] = vx[i] * limit; vy[i] = vy[i] * limit; vz[i] = vz[i] * limit
@@ -361,19 +363,21 @@ final class OrbRain {
                     }
                 }
             }
+        }
+        for i in 0..<drops {
+            if live[i] == 1 && pair[i] >= 0 { coalesce(i) }
+            if !active(i, amount, n) { continue }
             if pair[i] >= 0 { continue }
-            if x[i] * gx + y[i] * gy > 0.96 {
+            let overloaded = goal[i] > 0.14
+            if overloaded || x[i] * gx + y[i] * gy > 0.96 {
                 age[i] = age[i] + 1
-                if goal[i] > 0.075 || age[i] > 90 {
+                if overloaded || goal[i] > 0.075 || age[i] > 90 {
                     live[i] = 3
                     let along = vx[i] * gx + vy[i] * gy
                     vx[i] = vx[i] + gx * (0.006 - along); vy[i] = vy[i] + gy * (0.006 - along)
                     release(i)
                 }
             } else if z[i] < 0.04 { live[i] = 0; release(i) }
-        }
-        for i in 0..<drops {
-            if live[i] == 1 && pair[i] >= 0 { coalesce(i) }
         }
         for at in 0..<contactHead.count { contactHead[at] = -1 }
         var maxRadius = 0.0
