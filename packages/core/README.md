@@ -150,6 +150,7 @@ read from the config's folder.
 `weatherConfig(observation)` creates a weather orb; `{ target: "hero" }` creates a full-canvas
 sky and `{ target: "overlay" }` creates transparent airborne effects. The shell handle and
 renderer expose `setWeather(observation)` to transition observations without resetting surface
-water or ice. `normalizeWeather`, `weatherState`, `fromOpenMeteo`, `solarPosition` and `lunarPhase`
+water or ice. `{ legible: true }` lifts light rain, snow and hail so a small orb or a hero shows
+them, without changing the observation's rates. `normalizeWeather`, `weatherState`, `fromOpenMeteo`, `solarPosition` and `lunarPhase`
 are exported from both the package entry and standalone bundle. See
 [weather integration](../../docs/weather-integration.md) for units, controls and native export guidance.

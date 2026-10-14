@@ -204,7 +204,9 @@ const orb = useRef<OrbHandle>(null);
 
 Use `weatherConfig(snapshot, { target: "orb" | "hero" | "overlay" })` for a navbar orb, full-canvas
 hero sky or transparent weather layer. `handle.setWeather(snapshot)` springs new observations into
-the current state without resetting deposits. `weatherState` produces a state override. Canonical
+the current state without resetting deposits. `legible: true` (in the same options) lifts light
+rain, snow and hail so they read on a small orb or behind a page; the rates stay as observed.
+`weatherState` produces a state override. Canonical
 units: epoch milliseconds, Celsius, metres, m/s, wind **from** compass bearing, rain/snow/hail
 mm/hour water equivalent, cloud cover 0–1. Probability does not create precipitation.
 `fromOpenMeteo(row, { time, latitude, longitude, intervalSeconds })` converts explicit km/h/cm/mm

@@ -41,6 +41,12 @@ export interface WeatherOptions {
   /** Glass temperature; otherwise ambient temperature is used as an approximation. */
   glassTemperature?: number;
   reducedMotion?: boolean;
+  /**
+   * Lift light precipitation so it reads on a small orb or behind a page: any rain, snow or hail
+   * shows at least as a light shower, with bigger drops and flakes, and the air carries it. The
+   * snapshot's rates are unchanged; only how much is drawn.
+   */
+  legible?: boolean;
 }
 export function normalizeWeather(input: Partial<WeatherSnapshot>): WeatherSnapshot {
   const bounded = (key: keyof WeatherSnapshot, fallback: number, lo: number, hi: number): number =>
@@ -154,6 +160,13 @@ export function weatherState(
   const wet = response(w.rainRate),
     snowy = response(w.snowRate),
     icy = response(w.hailRate);
+  // Legible: a floor under any precipitation, rising with the square root of the rest.
+  const lift = (value: number, floor: number): number =>
+    options.legible && value > 0 ? floor + (1 - floor) * Math.sqrt(Math.min(1, value)) : value;
+  const rainDensity = lift(wet, 0.75),
+    snowAmount = lift(snowy, 0.65),
+    hailAmount = lift(icy, 0.65);
+  const falling = options.legible && rainDensity + snowAmount + hailAmount > 0;
   const heat = options.glassTemperature ?? w.temperature;
   const condensation = clamp((w.dewPoint - heat + 2) / 5, 0, 1);
   const sx = Math.sin((azimuth - bearing) * rad) * Math.cos(elevation * rad);
@@ -173,26 +186,26 @@ export function weatherState(
       reducedMotion: options.reducedMotion ?? false,
       rain: {
         enabled: true,
-        amount: 0,
+        amount: options.legible && wet > 0 ? 0.35 + rainDensity * 0.4 : 0,
         mist: wet * 0.3,
-        density: wet,
-        size: 0.3 + wet * 0.85,
+        density: rainDensity,
+        size: options.legible && wet > 0 ? 1.2 + rainDensity * 0.6 : 0.3 + wet * 0.85,
         run: 0.25 + wet * 2.15,
         spawn: 0.15,
       },
       snow: {
         enabled: true,
-        amount: snowy,
-        density: snowy,
+        amount: snowAmount,
+        density: lift(snowy, 0.7),
         dispersion: 0.85,
         melt: clamp(heat / 12, 0, 1),
-        size: 0.75 + snowy * 0.4,
+        size: options.legible && snowy > 0 ? 2 : 0.75 + snowy * 0.4,
       },
       hail: {
         enabled: true,
-        amount: icy,
-        density: icy,
-        size: 0.55 + icy * 0.8,
+        amount: hailAmount,
+        density: lift(icy, 0.7),
+        size: options.legible && icy > 0 ? 1.6 : 0.55 + icy * 0.8,
         melt: clamp(heat / 18, 0, 1),
       },
       clouds: {
@@ -224,7 +237,7 @@ export function weatherState(
       sunny: { enabled: true, amount: sunAmount, rays: 0.45 },
       air: {
         enabled: true,
-        amount: options.target === "orb" || options.target === undefined ? 0.22 : 1,
+        amount: falling || (options.target !== "orb" && options.target !== undefined) ? 1 : 0.22,
         depth: 0.75,
       },
     },
