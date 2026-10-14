@@ -67,6 +67,10 @@ defaulting to ambient temperature. Dew point plus a colder glass produces conden
 outdoor visibility instead produces atmospheric haze. `reducedMotion` suppresses airborne
 motion and lightning pulses. The web shell/renderer also honors system reduced-motion preferences.
 
+`legible: true` lifts light precipitation so it reads on a small navbar orb or behind a page: any
+rain, snow or hail shows at least as a light shower, with bigger drops and flakes, and the air
+carries it. The observation's rates are unchanged, only how much is drawn; a dry sky is untouched.
+
 Studio’s **Rain** slider controls generated rainfall; **Seeded drops** controls the authored
 starting beads. Arrivals use scene time independently of **Runoff speed**: at zero, incoming
 water still accumulates while surface water stays still. Maximum rainfall can retain 354

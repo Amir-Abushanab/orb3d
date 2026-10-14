@@ -109,6 +109,8 @@ Without a bundler, use the standalone build:
 
 Studio exports framework snippets, the editable JSON config, a compiled `program.json`, a poster PNG, a self-contained HTML page and a share link. The HTML export includes its runtime and media, so it can be opened on its own.
 
+To render posters in a build instead, `orb3d poster` draws one from a preset or an exported config: see [@orb3d/core](packages/core/README.md#posters).
+
 Small image files stay in your saved design. Larger files and videos use temporary browser URLs; host them and replace the source URL before putting the design in your app. Undo history keeps earlier files available until you reload.
 
 ## How it behaves on a page
@@ -118,6 +120,8 @@ Web components show a poster first, then load the renderer when they approach th
 The renderer pauses offscreen and in hidden tabs, limits pixel density, and respects reduced motion by holding a still frame and switching states without animation. Optional adaptive quality lowers live resolution when frames are slow; exports keep their requested resolution.
 
 Clear glass reflects a simulated environment. It cannot refract the HTML behind the canvas. Images from another origin need CORS enabled, and the raymarched landscape is best kept small on slower devices. Android is currently a source and local AAR preview.
+
+Safari paints no WebGL canvas inside an SVG `<foreignObject>`, so an orb placed there stays blank. To make an orb part of an SVG, such as the o of a wordmark, position it over the SVG instead.
 
 ## More detail
 

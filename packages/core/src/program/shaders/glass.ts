@@ -501,7 +501,33 @@ vec4 rainScan($U vec2 face, float px, vec4 clock, inout vec4 marks) {
   $END
   vec4 liquid = vec4(0.0);
   float deepest = 1000.0;
+  float runs = 1.0;
   $IF(rainDrops)
+  // A drop authored with runs: 1 keeps the clearer path it wiped above it and the beads it shed
+  // there while it rests where it was put; once the rain moves it, its simulated trail takes over.
+  float tilt = $D(weather.gravity) * 0.017453293;
+  vec2 up = vec2(-sin(tilt), cos(tilt));
+  for (int i = 0; i < $MAX(drops); i++) {
+    if (float(i) >= counts.x) break;
+    vec4 authored = uData[$S(drops) + i];
+    vec4 rest = uData[$S(pool) + i * 2];
+    if (authored.w < 0.5 || rest.y <= 0.0 || rest.z < 0.0) continue;
+    if (length(pathPoint(rest.x) - authored.xy) > 0.01) continue;
+    float alpha = sat(amount * counts.x - float(i));
+    // Half the orb's radius back up the glass, as wide as the drop.
+    vec2 path = up * 0.5;
+    float h = clamp(dot(face - authored.xy, path) / dot(path, path), 0.0, 1.0);
+    float apart = length(face - authored.xy - path * h);
+    runs = min(runs, 1.0 - 0.12 * alpha * cover(apart - 0.45 * authored.z, px));
+    for (int k = 0; k < 4; k++) {
+      float n = float(k + 1);
+      float jitter = (hash(float(i * 4 + k) + 0.5) - 0.5) * 0.02;
+      vec2 at = authored.xy + up * (0.1 * n + 0.04) + vec2(up.y, -up.x) * jitter;
+      // Smaller the further back, and foreshortened toward the rim like every drop.
+      float r = authored.z * (0.38 - 0.06 * n) * sqrt(max(0.25, 1.0 - dot(at, at)));
+      consider(vec4(at, r, alpha), length(face - at) / r, max(1.03, 1.0 + px / r), hit, next, near);
+    }
+  }
   for (int i = 0; i < $MAX(pool); i++) {
     vec4 pool = uData[$S(pool) + i * 2];
     if (pool.y <= 0.0 || pool.z < 0.0) continue;
@@ -521,7 +547,7 @@ vec4 rainScan($U vec2 face, float px, vec4 clock, inout vec4 marks) {
   $IF(frozenFlakes)
   snowWater($u face, px, 1.0, liquid, deepest, shadow, wipe);
   $END
-  marks = vec4(wipe, wipe, shadow, 1.0);
+  marks = vec4(wipe, wipe, shadow, runs);
   return liquid.w > 0.0 ? liquid : water(face, px, hit, next, near);
 }
 

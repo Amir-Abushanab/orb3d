@@ -27,6 +27,19 @@ describe("weather observations", () => {
     expect(drizzle.weather?.snow?.amount).toBeGreaterThan(0);
     expect(drizzle.weather?.hail?.amount).toBeGreaterThan(0);
   });
+  it("lifts light precipitation when legible, and leaves a dry sky alone", () => {
+    const light = { rainRate: 0.2, snowRate: 0.1, hailRate: 0.05 };
+    const plain = weatherState(light);
+    const legible = weatherState(light, { legible: true });
+    expect(plain.weather?.rain?.density).toBeLessThan(0.5);
+    expect(legible.weather?.rain?.density).toBeGreaterThanOrEqual(0.75);
+    expect(legible.weather?.rain?.size).toBeGreaterThan(plain.weather!.rain!.size!);
+    expect(legible.weather?.snow?.amount).toBeGreaterThanOrEqual(0.65);
+    expect(legible.weather?.hail?.amount).toBeGreaterThanOrEqual(0.65);
+    expect(plain.weather?.air?.amount).toBe(0.22);
+    expect(legible.weather?.air?.amount).toBe(1);
+    expect(weatherState({}, { legible: true })).toEqual(weatherState({}));
+  });
   it("melts according to glass temperature and condenses below dew point", () => {
     const cold = weatherState(
       { temperature: 4, dewPoint: 2, snowRate: 1 },

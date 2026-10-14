@@ -58,18 +58,26 @@ No peer dependencies beyond React for `@orb3d/react`. Everything is ESM-only.
 
 ## Choosing an entry
 
-| Need                           | Use                                                                |
-| ------------------------------ | ------------------------------------------------------------------ |
-| React                          | `import { Orb3D } from "@orb3d/react"`                             |
-| Vue, Svelte, plain HTML        | `import "@orb3d/element"` then `<orb-3d>`                          |
-| Framework-agnostic, own DOM    | `import { createOrb } from "@orb3d/core"` (the poster shell)       |
-| The engine, no shell or poster | `import { OrbRenderer } from "@orb3d/core/renderer"`               |
-| One `<script>` from a CDN      | `import { mountOrb } from ".../@orb3d/core/standalone"`            |
-| Built-in presets               | `import { PRESETS } from "@orb3d/core/presets"`                    |
-| React Native, Expo             | `import { Orb3D } from "@orb3d/react-native"` (Skia)               |
-| SwiftUI, UIKit, AppKit         | Swift package `Orb3D`: `OrbView(preset: .aura, state:)`            |
-| Android views, Compose         | Source preview / local AAR: `OrbView(context)`                     |
-| Another platform, your own GPU | `compileOrb`, `OrbRuntime`, `orbShader` from `@orb3d/core/program` |
+| Need                              | Use                                                                  |
+| --------------------------------- | -------------------------------------------------------------------- |
+| React                             | `import { Orb3D } from "@orb3d/react"`                               |
+| Vue, Svelte, plain HTML           | `import "@orb3d/element"` then `<orb-3d>`                            |
+| Framework-agnostic, own DOM       | `import { createOrb } from "@orb3d/core"` (the poster shell)         |
+| The engine, no shell or poster    | `import { OrbRenderer } from "@orb3d/core/renderer"`                 |
+| One `<script>` from a CDN         | `import { mountOrb } from ".../@orb3d/core/standalone"`              |
+| Built-in presets                  | `import { PRESETS } from "@orb3d/core/presets"`                      |
+| React Native, Expo                | `import { Orb3D } from "@orb3d/react-native"` (Skia)                 |
+| SwiftUI, UIKit, AppKit            | Swift package `Orb3D`: `OrbView(preset: .aura, state:)`              |
+| Android views, Compose            | Source preview / local AAR: `OrbView(context)`                       |
+| Another platform, your own GPU    | `compileOrb`, `OrbRuntime`, `orbShader` from `@orb3d/core/program`   |
+| Your own WebGL2 context, a worker | `import { OrbGL } from "@orb3d/core/renderer"`                       |
+| A poster file, in a build         | `orb3d poster --preset sunset --size 96 --out mark.png` (Playwright) |
+
+`OrbGL` draws a compiled program on a WebGL2 context you own, with no DOM, such as an
+`OffscreenCanvas` in a worker: `use(program)` links its shader once per kind of contents, then
+`draw(runtime, width, height)` each frame after `runtime.advance(dt)`. Pictures and clips need
+`OrbRenderer`. Don't copy the uniform layout into a renderer of your own: it changes with the
+program format.
 
 ## Quick starts
 
@@ -196,7 +204,9 @@ const orb = useRef<OrbHandle>(null);
 
 Use `weatherConfig(snapshot, { target: "orb" | "hero" | "overlay" })` for a navbar orb, full-canvas
 hero sky or transparent weather layer. `handle.setWeather(snapshot)` springs new observations into
-the current state without resetting deposits. `weatherState` produces a state override. Canonical
+the current state without resetting deposits. `legible: true` (in the same options) lifts light
+rain, snow and hail so they read on a small orb or behind a page; the rates stay as observed.
+`weatherState` produces a state override. Canonical
 units: epoch milliseconds, Celsius, metres, m/s, wind **from** compass bearing, rain/snow/hail
 mm/hour water equivalent, cloud cover 0–1. Probability does not create precipitation.
 `fromOpenMeteo(row, { time, latitude, longitude, intervalSeconds })` converts explicit km/h/cm/mm
@@ -280,5 +290,8 @@ authored resolution. Studio enables it for the preview. Embedded orbs default to
 - Changing `contents.type` in a state: states only move dials; set the contents in the config.
 - Expecting the canvas to show in headless Chromium: the shell refuses software renderers by design.
   Use `webgl="force"` for tests, or the engine directly.
-- Posters: capture with `snapshot({ time: 0 })` (or Orb Studio's poster.png) in the opening
-  state, so the poster and the first live frame match.
+- Mounting the orb inside an SVG `<foreignObject>`, to make it a letter of a wordmark say: Safari
+  paints no WebGL canvas there, so the orb is blank or drawn at the wrong place and scale.
+  Position it over the SVG instead, sized from the SVG's geometry.
+- Posters: capture with `snapshot({ time: 0 })`, Orb Studio's poster.png or `orb3d poster` in a
+  build, in the opening state, so the poster and the first live frame match.

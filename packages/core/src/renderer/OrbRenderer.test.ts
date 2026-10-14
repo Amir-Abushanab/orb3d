@@ -24,6 +24,7 @@ function renderer(adaptiveQuality: boolean) {
     UNIFORM_BLOCK_DATA_SIZE: 1,
     createVertexArray: () => ({}),
     bindVertexArray: noOp,
+    deleteVertexArray: noOp,
     createShader: () => ({}),
     shaderSource: noOp,
     compileShader: noOp,
