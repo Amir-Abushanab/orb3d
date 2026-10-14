@@ -1,5 +1,37 @@
 # @orb3d/core
 
+## 0.3.0
+
+### Minor Changes
+
+- [#9](https://github.com/Amir-Abushanab/orb3d/pull/9) [`29fade6`](https://github.com/Amir-Abushanab/orb3d/commit/29fade6a510f8970711ae5dd544cccf621e538cf) Thanks [@Amir-Abushanab](https://github.com/Amir-Abushanab)! - Add `legible` to the weather options of `weatherState`, `weatherConfig` and `setWeather`. It lifts
+  light rain, snow and hail so they read on a small orb or behind a page, with bigger drops and
+  flakes and the air carrying them, without changing the observation's rates.
+
+- [#9](https://github.com/Amir-Abushanab/orb3d/pull/9) [`cfdd90e`](https://github.com/Amir-Abushanab/orb3d/commit/cfdd90e52b9221de537f8b843e04234e68cc39d2) Thanks [@Amir-Abushanab](https://github.com/Amir-Abushanab)! - Add `OrbGL` to `@orb3d/core/renderer`: a compiled orb's shader on a WebGL2 context you own, with
+  no DOM, such as an `OffscreenCanvas` in a worker. `use(program)` links the shader its contents
+  need and binds its uniform blocks; `draw(runtime, width, height)` uploads the runtime's frame and
+  draws it. `OrbRenderer` now draws through it, so a renderer in a worker no longer copies the
+  uniform layout, which changes with the program format.
+
+- [#9](https://github.com/Amir-Abushanab/orb3d/pull/9) [`300cb3b`](https://github.com/Amir-Abushanab/orb3d/commit/300cb3b179db484ea3b9d56ef6e2bd2806a6e311) Thanks [@Amir-Abushanab](https://github.com/Amir-Abushanab)! - Add the `orb3d poster` command, which renders an orb's poster to a PNG, WebP or JPEG file from a
+  preset or a config. It draws through the engine in headless Chromium on SwiftShader, so a config
+  gives the same file on every machine; by default it draws at four times the size and scales down.
+  It takes the state, time and level to draw, and reads pictures named by a relative path from the
+  config's folder. Playwright is an optional peer dependency.
+
+### Patch Changes
+
+- [#9](https://github.com/Amir-Abushanab/orb3d/pull/9) [`15b6280`](https://github.com/Amir-Abushanab/orb3d/commit/15b6280fa69a3650fcdd1a4128ac4a0f9c7cf1bc) Thanks [@Amir-Abushanab](https://github.com/Amir-Abushanab)! - Document that Safari paints no WebGL canvas inside an SVG `<foreignObject>`, so an orb mounted
+  there stays blank, and that an orb meant as part of an SVG, such as the o of a wordmark, belongs
+  over the SVG instead. The agent skill lists it among the common mistakes.
+
+- [#9](https://github.com/Amir-Abushanab/orb3d/pull/9) [`54d0d91`](https://github.com/Amir-Abushanab/orb3d/commit/54d0d91862f28cfde7cfb336e9e5242469f8b20e) Thanks [@Amir-Abushanab](https://github.com/Amir-Abushanab)! - Draw the trail and beads of drops authored with `runs: 1` again. The rain rewrite in 0.2.0 stopped
+  drawing them, so the `sunset` preset lost the two run trails of the mark it reproduces. A drop that
+  has run shows the clearer path it wiped above it and the beads it shed there while it rests where
+  it was put; once the rain moves it, its simulated trail takes over. The shader change reaches
+  React Native, Swift and Android with the regenerated native sources.
+
 ## 0.2.2
 
 ### Patch Changes
