@@ -119,6 +119,8 @@ The renderer pauses offscreen and in hidden tabs, limits pixel density, and resp
 
 Clear glass reflects a simulated environment. It cannot refract the HTML behind the canvas. Images from another origin need CORS enabled, and the raymarched landscape is best kept small on slower devices. Android is currently a source and local AAR preview.
 
+Safari paints no WebGL canvas inside an SVG `<foreignObject>`, so an orb placed there stays blank. To make an orb part of an SVG, such as the o of a wordmark, position it over the SVG instead.
+
 ## More detail
 
 The [design reference](docs/reference.md) covers every kind of contents, glass controls, state transitions and rendering limits. See [colour fields](docs/color-fields.md), [weather integration](docs/weather-integration.md) and [performance](docs/performance.md) for deeper examples.

@@ -218,5 +218,8 @@ habits, an orb is one shader and needs no scene graph.
 - The landscape raymarches every pixel: on a low-end phone keep it small or lower `quality`.
 - Clear glass shows its own room through it, not the page behind it: a canvas cannot read the
   page. Lower `glass.opacity` to let the page show through, unbent.
+- Safari paints no WebGL canvas inside an SVG `<foreignObject>`: an orb there is blank, or drawn
+  at the wrong place and scale. To set an orb into an SVG (the o of a wordmark, say), position it
+  over the SVG instead, sized from the SVG's own geometry.
 - A picture loaded from another origin needs CORS on the web. React Native takes clips as URLs or
   file URIs; a picture can also be a `require`d asset (the `source` prop).

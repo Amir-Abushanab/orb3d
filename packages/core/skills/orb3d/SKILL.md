@@ -280,5 +280,8 @@ authored resolution. Studio enables it for the preview. Embedded orbs default to
 - Changing `contents.type` in a state: states only move dials; set the contents in the config.
 - Expecting the canvas to show in headless Chromium: the shell refuses software renderers by design.
   Use `webgl="force"` for tests, or the engine directly.
+- Mounting the orb inside an SVG `<foreignObject>`, to make it a letter of a wordmark say: Safari
+  paints no WebGL canvas there, so the orb is blank or drawn at the wrong place and scale.
+  Position it over the SVG instead, sized from the SVG's geometry.
 - Posters: capture with `snapshot({ time: 0 })` (or Orb Studio's poster.png) in the opening
   state, so the poster and the first live frame match.
