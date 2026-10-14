@@ -1,7 +1,10 @@
 // Run the built wrappers in Chromium: actual React effects, custom-element upgrades and fetches.
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { createRequire } from "node:module";
-import { resolve } from "node:path";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
 import { chromium } from "playwright";
 import { createServer } from "vite";
 import { run } from "./lib/cli.mjs";
@@ -185,4 +188,16 @@ await run(async (defer) => {
     "Custom element: pre-upgrade config, custom tags, invalid JSON and stale fetches passed",
   );
   assert.deepEqual(errors, []);
+
+  // The poster command: a preset drawn to a small PNG through the engine it ships with.
+  const scratch = mkdtempSync(join(tmpdir(), "orb3d-poster-"));
+  defer(() => rmSync(scratch, { recursive: true, force: true }));
+  const poster = join(scratch, "sunset.png");
+  const bin = resolve(ROOT, "packages/core/bin/orb3d.mjs");
+  const args = ["--preset", "sunset", "--size", "32", "--supersample", "2", "--out", poster];
+  execFileSync(process.execPath, [bin, "poster", ...args]);
+  const png = readFileSync(poster);
+  assert.equal(png.toString("latin1", 12, 16), "IHDR");
+  assert.deepEqual([png.readUInt32BE(16), png.readUInt32BE(20)], [32, 32]);
+  console.log("Poster command: a preset drawn to a 32px PNG passed");
 });

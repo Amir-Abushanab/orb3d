@@ -109,6 +109,8 @@ Without a bundler, use the standalone build:
 
 Studio exports framework snippets, the editable JSON config, a compiled `program.json`, a poster PNG, a self-contained HTML page and a share link. The HTML export includes its runtime and media, so it can be opened on its own.
 
+To render posters in a build instead, `orb3d poster` draws one from a preset or an exported config: see [@orb3d/core](packages/core/README.md#posters).
+
 Small image files stay in your saved design. Larger files and videos use temporary browser URLs; host them and replace the source URL before putting the design in your app. Undo history keeps earlier files available until you reload.
 
 ## How it behaves on a page

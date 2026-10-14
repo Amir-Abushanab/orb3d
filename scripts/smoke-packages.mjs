@@ -122,6 +122,10 @@ try {
     await import(pathToFileURL(require.resolve(name)));
   }
   assert.match(readFileSync(require.resolve("@orb3d/react"), "utf8"), /^\s*["']use client["']/);
+  const help = execFileSync(process.execPath, [join(web.modules, "@orb3d/core/bin/orb3d.mjs")], {
+    encoding: "utf8",
+  });
+  assert.match(help, /orb3d poster/);
   checkTypes(
     web.fixture,
     `import { createElement } from "react";

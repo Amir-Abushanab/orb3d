@@ -127,6 +127,24 @@ shader of your own.
 `@orb3d/core/standalone` is one file with the engine and the presets bundled, for a plain
 `<script type="module">`; `mountOrb` there upgrades with no second request.
 
+## Posters
+
+`orb3d poster` renders a poster to a file in a build, for the shell's `poster` or a favicon. It
+draws through the engine in headless Chromium on SwiftShader, so a config gives the same file on
+every machine. It needs Playwright, an optional peer, and its Chromium
+(`pnpm exec playwright install chromium`).
+
+```sh
+pnpm exec orb3d poster --preset sunset --size 96 --out public/mark.png
+pnpm exec orb3d poster --config orb.json --state thinking --time 2 --out thinking.webp
+```
+
+`--preset` or `--config` (JSON such as Studio's export, over the preset when both are given),
+`--state`, `--time` (default 0, the frame the orb opens on), `--level`, `--size` (default 256),
+`--supersample` (default 4: drawn larger and scaled down, which smooths the glass's edge),
+`--quality` and `--out` (`.png`, `.webp` or `.jpg`). A picture or clip named by a relative path is
+read from the config's folder.
+
 ## Weather observations
 
 `weatherConfig(observation)` creates a weather orb; `{ target: "hero" }` creates a full-canvas

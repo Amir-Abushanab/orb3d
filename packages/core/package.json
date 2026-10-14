@@ -24,7 +24,11 @@
     "url": "git+https://github.com/Amir-Abushanab/orb3d.git",
     "directory": "packages/core"
   },
+  "bin": {
+    "orb3d": "./bin/orb3d.mjs"
+  },
   "files": [
+    "bin",
     "dist",
     "skills"
   ],
@@ -76,8 +80,17 @@
   "devDependencies": {
     "@tanstack/intent": "^0.3.6",
     "canvaskit-wasm": "^0.42.0",
+    "playwright": "^1.62.1",
     "vite": "^8.1.0",
     "vitest": "^4.1.10"
+  },
+  "peerDependencies": {
+    "playwright": ">=1.40.0"
+  },
+  "peerDependenciesMeta": {
+    "playwright": {
+      "optional": true
+    }
   },
   "engines": {
     "node": ">=20.19"

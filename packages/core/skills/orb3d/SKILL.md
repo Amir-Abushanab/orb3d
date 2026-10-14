@@ -58,19 +58,20 @@ No peer dependencies beyond React for `@orb3d/react`. Everything is ESM-only.
 
 ## Choosing an entry
 
-| Need                              | Use                                                                |
-| --------------------------------- | ------------------------------------------------------------------ |
-| React                             | `import { Orb3D } from "@orb3d/react"`                             |
-| Vue, Svelte, plain HTML           | `import "@orb3d/element"` then `<orb-3d>`                          |
-| Framework-agnostic, own DOM       | `import { createOrb } from "@orb3d/core"` (the poster shell)       |
-| The engine, no shell or poster    | `import { OrbRenderer } from "@orb3d/core/renderer"`               |
-| One `<script>` from a CDN         | `import { mountOrb } from ".../@orb3d/core/standalone"`            |
-| Built-in presets                  | `import { PRESETS } from "@orb3d/core/presets"`                    |
-| React Native, Expo                | `import { Orb3D } from "@orb3d/react-native"` (Skia)               |
-| SwiftUI, UIKit, AppKit            | Swift package `Orb3D`: `OrbView(preset: .aura, state:)`            |
-| Android views, Compose            | Source preview / local AAR: `OrbView(context)`                     |
-| Another platform, your own GPU    | `compileOrb`, `OrbRuntime`, `orbShader` from `@orb3d/core/program` |
-| Your own WebGL2 context, a worker | `import { OrbGL } from "@orb3d/core/renderer"`                     |
+| Need                              | Use                                                                  |
+| --------------------------------- | -------------------------------------------------------------------- |
+| React                             | `import { Orb3D } from "@orb3d/react"`                               |
+| Vue, Svelte, plain HTML           | `import "@orb3d/element"` then `<orb-3d>`                            |
+| Framework-agnostic, own DOM       | `import { createOrb } from "@orb3d/core"` (the poster shell)         |
+| The engine, no shell or poster    | `import { OrbRenderer } from "@orb3d/core/renderer"`                 |
+| One `<script>` from a CDN         | `import { mountOrb } from ".../@orb3d/core/standalone"`              |
+| Built-in presets                  | `import { PRESETS } from "@orb3d/core/presets"`                      |
+| React Native, Expo                | `import { Orb3D } from "@orb3d/react-native"` (Skia)                 |
+| SwiftUI, UIKit, AppKit            | Swift package `Orb3D`: `OrbView(preset: .aura, state:)`              |
+| Android views, Compose            | Source preview / local AAR: `OrbView(context)`                       |
+| Another platform, your own GPU    | `compileOrb`, `OrbRuntime`, `orbShader` from `@orb3d/core/program`   |
+| Your own WebGL2 context, a worker | `import { OrbGL } from "@orb3d/core/renderer"`                       |
+| A poster file, in a build         | `orb3d poster --preset sunset --size 96 --out mark.png` (Playwright) |
 
 `OrbGL` draws a compiled program on a WebGL2 context you own, with no DOM, such as an
 `OffscreenCanvas` in a worker: `use(program)` links its shader once per kind of contents, then
@@ -290,5 +291,5 @@ authored resolution. Studio enables it for the preview. Embedded orbs default to
 - Mounting the orb inside an SVG `<foreignObject>`, to make it a letter of a wordmark say: Safari
   paints no WebGL canvas there, so the orb is blank or drawn at the wrong place and scale.
   Position it over the SVG instead, sized from the SVG's geometry.
-- Posters: capture with `snapshot({ time: 0 })` (or Orb Studio's poster.png) in the opening
-  state, so the poster and the first live frame match.
+- Posters: capture with `snapshot({ time: 0 })`, Orb Studio's poster.png or `orb3d poster` in a
+  build, in the opening state, so the poster and the first live frame match.
