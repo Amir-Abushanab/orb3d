@@ -1,6 +1,6 @@
 {
   "name": "@orb3d/react",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Drop-in glass orb with states for React: the <Orb3D> component",
   "keywords": [
     "agent",
