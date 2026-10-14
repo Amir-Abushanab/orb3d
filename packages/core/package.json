@@ -75,6 +75,7 @@
   },
   "devDependencies": {
     "@tanstack/intent": "^0.3.6",
+    "canvaskit-wasm": "^0.42.0",
     "vite": "^8.1.0",
     "vitest": "^4.1.10"
   },
