@@ -59,6 +59,35 @@ shader, or shows clear glass if there is none. It pauses offscreen and in hidden
 restores a lost context and, under `prefers-reduced-motion`, holds a still frame and cuts between
 states.
 
+On a WebGL2 context of your own, such as an `OffscreenCanvas` in a worker, `OrbGL` draws a compiled
+program with no DOM: `use(program)` links the shader its contents need, once for each kind, and
+binds its uniform blocks; `draw(runtime, width, height)` uploads the runtime's frame and draws it.
+`OrbRenderer` draws through one. Pictures and clips stay `OrbRenderer`'s.
+
+```ts
+// A worker, handed a canvas the page transferred with transferControlToOffscreen().
+import { PRESETS } from "@orb3d/core/presets";
+import { compileOrb, OrbRuntime } from "@orb3d/core/program";
+import { OrbGL } from "@orb3d/core/renderer";
+
+self.onmessage = ({ data: { canvas } }: MessageEvent<{ canvas: OffscreenCanvas }>) => {
+  const program = compileOrb(PRESETS.aura());
+  const runtime = new OrbRuntime(program);
+  const orb = new OrbGL(
+    canvas.getContext("webgl2", { premultipliedAlpha: true, antialias: false })!,
+  );
+  orb.use(program);
+  let last = performance.now();
+  const frame = (now: number) => {
+    runtime.advance(Math.min((now - last) / 1000, 0.1));
+    last = now;
+    orb.draw(runtime, canvas.width, canvas.height);
+    requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
+};
+```
+
 ## The config
 
 `OrbConfig` is plain JSON: `contents` (what is in the glass, by `type`: `none`, `gradient`,

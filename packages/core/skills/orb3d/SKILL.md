@@ -58,18 +58,25 @@ No peer dependencies beyond React for `@orb3d/react`. Everything is ESM-only.
 
 ## Choosing an entry
 
-| Need                           | Use                                                                |
-| ------------------------------ | ------------------------------------------------------------------ |
-| React                          | `import { Orb3D } from "@orb3d/react"`                             |
-| Vue, Svelte, plain HTML        | `import "@orb3d/element"` then `<orb-3d>`                          |
-| Framework-agnostic, own DOM    | `import { createOrb } from "@orb3d/core"` (the poster shell)       |
-| The engine, no shell or poster | `import { OrbRenderer } from "@orb3d/core/renderer"`               |
-| One `<script>` from a CDN      | `import { mountOrb } from ".../@orb3d/core/standalone"`            |
-| Built-in presets               | `import { PRESETS } from "@orb3d/core/presets"`                    |
-| React Native, Expo             | `import { Orb3D } from "@orb3d/react-native"` (Skia)               |
-| SwiftUI, UIKit, AppKit         | Swift package `Orb3D`: `OrbView(preset: .aura, state:)`            |
-| Android views, Compose         | Source preview / local AAR: `OrbView(context)`                     |
-| Another platform, your own GPU | `compileOrb`, `OrbRuntime`, `orbShader` from `@orb3d/core/program` |
+| Need                              | Use                                                                |
+| --------------------------------- | ------------------------------------------------------------------ |
+| React                             | `import { Orb3D } from "@orb3d/react"`                             |
+| Vue, Svelte, plain HTML           | `import "@orb3d/element"` then `<orb-3d>`                          |
+| Framework-agnostic, own DOM       | `import { createOrb } from "@orb3d/core"` (the poster shell)       |
+| The engine, no shell or poster    | `import { OrbRenderer } from "@orb3d/core/renderer"`               |
+| One `<script>` from a CDN         | `import { mountOrb } from ".../@orb3d/core/standalone"`            |
+| Built-in presets                  | `import { PRESETS } from "@orb3d/core/presets"`                    |
+| React Native, Expo                | `import { Orb3D } from "@orb3d/react-native"` (Skia)               |
+| SwiftUI, UIKit, AppKit            | Swift package `Orb3D`: `OrbView(preset: .aura, state:)`            |
+| Android views, Compose            | Source preview / local AAR: `OrbView(context)`                     |
+| Another platform, your own GPU    | `compileOrb`, `OrbRuntime`, `orbShader` from `@orb3d/core/program` |
+| Your own WebGL2 context, a worker | `import { OrbGL } from "@orb3d/core/renderer"`                     |
+
+`OrbGL` draws a compiled program on a WebGL2 context you own, with no DOM, such as an
+`OffscreenCanvas` in a worker: `use(program)` links its shader once per kind of contents, then
+`draw(runtime, width, height)` each frame after `runtime.advance(dt)`. Pictures and clips need
+`OrbRenderer`. Don't copy the uniform layout into a renderer of your own: it changes with the
+program format.
 
 ## Quick starts
 

@@ -1,6 +1,4 @@
-import { programLayout, UNIFORM_PAGE } from "../program/layout";
 import { weatherState, type WeatherSnapshot, type WeatherOptions } from "../weather/index";
-import { paintKey, PAINT_PAGE } from "../program/paint";
 import {
   ensureOrbConfig,
   mergeOrbConfig,
@@ -10,7 +8,7 @@ import {
 } from "../config/model";
 import { compileOrb, type OrbProgram } from "../program/compile";
 import { OrbRuntime } from "../program/runtime";
-import { VERTEX_SHADER, orbShader, userCodeLine, type ShaderSource } from "../program/shader";
+import { OrbGL, shaderKey } from "./gl";
 import { OrbMedia } from "./media";
 import { AdaptiveResolution } from "./adaptive";
 
@@ -36,20 +34,6 @@ export interface SetStateOptions {
   immediate?: boolean;
 }
 
-/** A compiled GL program for one kind of contents (and one custom shader's code). */
-interface Built {
-  key: string;
-  program: WebGLProgram;
-  buffer: WebGLBuffer;
-  paints: (WebGLBuffer | null)[];
-  extra: WebGLBuffer | null;
-  paintData?: Float32Array;
-}
-
-function shaderKey(source: ShaderSource): string {
-  return `${source.features ?? "all"}:${source.contents}:${paintKey(source.paint)}:${source.code ?? ""}`;
-}
-
 /**
  * The orb's engine on the web: one full-canvas triangle and one fragment shader on a WebGL2
  * context. The config compiles to a program; the shared runtime springs its dials toward the
@@ -69,7 +53,7 @@ export class OrbRenderer {
   #capturing = false;
 
   #gl: WebGL2RenderingContext | null = null;
-  #built: Built | null = null;
+  #orb: OrbGL | null = null;
   #shaderError: string | null = null;
   /** The key of the shader of your own that last failed to compile, so it is not tried again. */
   #failed: string | null = null;
@@ -299,7 +283,7 @@ export class OrbRenderer {
 
   /** Draw one frame now, without advancing time. */
   renderOnce(): void {
-    if (this.#gl && this.#built && !this.#lost && !this.#disposed) this.#draw();
+    if (this.#orb?.key && !this.#lost && !this.#disposed) this.#draw();
   }
 
   /** Render at a fixed pixel size instead of the container's (for exports); none to undo. */
@@ -373,13 +357,8 @@ export class OrbRenderer {
     const gl = this.#gl;
     this.#media?.dispose(gl);
     this.#media = null;
-    if (gl && this.#built) {
-      for (const buffer of this.#built.paints) if (buffer) gl.deleteBuffer(buffer);
-      if (this.#built.extra) gl.deleteBuffer(this.#built.extra);
-      gl.deleteBuffer(this.#built.buffer);
-      gl.deleteProgram(this.#built.program);
-    }
-    this.#built = null;
+    this.#orb?.dispose();
+    this.#orb = null;
     // Hand the context back now rather than at garbage collection: browsers cap live contexts.
     if (this.#ownsCanvas) gl?.getExtension("WEBGL_lose_context")?.loseContext();
     this.#gl = null;
@@ -413,7 +392,7 @@ export class OrbRenderer {
   #onContextLost = (event: Event): void => {
     event.preventDefault(); // ask for a restore
     this.#lost = true;
-    this.#built = null;
+    this.#orb = null;
     this.#media?.lose();
     this.refreshPlayback();
   };
@@ -456,8 +435,7 @@ export class OrbRenderer {
     });
     if (!gl) throw new Error("[orb3d] WebGL2 is not available");
     this.#gl = gl;
-    this.#built = null;
-    gl.bindVertexArray(gl.createVertexArray());
+    this.#orb = new OrbGL(gl);
     this.#build();
   }
 
@@ -470,17 +448,11 @@ export class OrbRenderer {
       this.#keepShowing();
       return;
     }
-    if (this.#built?.key === key) {
-      // Back to code that compiled, which is what is showing: nothing is wrong any more.
-      this.#shaderError = null;
-      this.#failed = null;
-      return;
-    }
     try {
-      const built = this.#link(key, this.#program);
+      // Back to code that compiled, or a new shader that does: nothing is wrong any more.
+      this.#orb!.use(this.#program, key);
       this.#shaderError = null;
       this.#failed = null;
-      this.#replace(built);
     } catch (error) {
       // Only a shader of your own can fail on a working context.
       if (this.#program.contents !== "shader" || gl.isContextLost()) throw error;
@@ -498,136 +470,17 @@ export class OrbRenderer {
    * show clear glass.
    */
   #keepShowing(): void {
-    if (this.#built?.key.includes(":shader:")) return;
-    if (this.#built?.key !== "fallback")
-      this.#replace(this.#link("fallback", { contents: "none" }));
+    const orb = this.#orb!;
+    if (orb.key?.includes(":shader:")) return;
+    if (orb.key !== "fallback") orb.use({ contents: "none" }, "fallback");
     // Clear glass reads the uniform array of clear glass, so hand it one of those.
     this.#program = compileOrb({ ...this.#config, contents: { type: "none" } });
     this.#runtime.setProgram(this.#program, this.#runtime.state);
   }
 
-  #replace(built: Built): void {
-    if (this.#built) {
-      for (const buffer of this.#built.paints) if (buffer) this.#gl!.deleteBuffer(buffer);
-      if (this.#built.extra) this.#gl!.deleteBuffer(this.#built.extra);
-      this.#gl!.deleteBuffer(this.#built.buffer);
-      this.#gl!.deleteProgram(this.#built.program);
-    }
-    this.#built = built;
-  }
-
-  #link(key: string, source: ShaderSource): Built {
-    const gl = this.#gl!;
-    const compile = (type: number, text: string): WebGLShader => {
-      const shader = gl.createShader(type)!;
-      gl.shaderSource(shader, text);
-      gl.compileShader(shader);
-      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS) && !gl.isContextLost()) {
-        const log = gl.getShaderInfoLog(shader);
-        gl.deleteShader(shader);
-        throw new Error(`[orb3d] shader failed to compile: ${log}`);
-      }
-      return shader;
-    };
-    const program = gl.createProgram()!;
-    const vertex = compile(gl.VERTEX_SHADER, VERTEX_SHADER);
-    const text = orbShader("glsl", source);
-    let fragment: WebGLShader;
-    try {
-      fragment = compile(gl.FRAGMENT_SHADER, text);
-    } catch (error) {
-      gl.deleteShader(vertex);
-      gl.deleteProgram(program);
-      // Point a custom shader's errors at its own lines rather than the whole shader's.
-      const first = userCodeLine(text);
-      if (!first || !(error instanceof Error)) throw error;
-      throw new Error(
-        error.message
-          .replace("[orb3d] shader failed to compile: ", "")
-          .replace(/ERROR: \d+:(\d+):/g, (_, line: string) => `line ${Number(line) - first + 1}:`)
-          .trim(),
-        { cause: error },
-      );
-    }
-    gl.attachShader(program, vertex);
-    gl.attachShader(program, fragment);
-    gl.linkProgram(program);
-    gl.deleteShader(vertex);
-    gl.deleteShader(fragment);
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS) && !gl.isContextLost()) {
-      const log = gl.getProgramInfoLog(program);
-      gl.deleteProgram(program);
-      throw new Error(`[orb3d] shader failed to link: ${log}`);
-    }
-    gl.useProgram(program);
-    const uMedia = gl.getUniformLocation(program, "uMedia");
-    if (uMedia) gl.uniform1i(uMedia, 0);
-    const block = gl.getUniformBlockIndex(program, "OrbData");
-    const bytes = gl.getActiveUniformBlockParameter(
-      program,
-      block,
-      gl.UNIFORM_BLOCK_DATA_SIZE,
-    ) as number;
-    const buffer = gl.createBuffer()!;
-    gl.uniformBlockBinding(program, block, 0);
-    gl.bindBuffer(gl.UNIFORM_BUFFER, buffer);
-    gl.bufferData(gl.UNIFORM_BUFFER, bytes, gl.DYNAMIC_DRAW);
-    const extraBlock = gl.getUniformBlockIndex(program, "OrbDataExtra");
-    const extra = extraBlock === gl.INVALID_INDEX ? null : gl.createBuffer()!;
-    if (extra) {
-      gl.uniformBlockBinding(program, extraBlock, 12);
-      gl.bindBuffer(gl.UNIFORM_BUFFER, extra);
-      gl.bufferData(
-        gl.UNIFORM_BUFFER,
-        (programLayout(source.contents).slots - UNIFORM_PAGE) * 16,
-        gl.DYNAMIC_DRAW,
-      );
-    }
-    const paints = (source.paint?.pages ?? []).map((slots, i) => {
-      const paintBlock = gl.getUniformBlockIndex(program, `OrbPaint${i}`);
-      if (paintBlock === gl.INVALID_INDEX) return null;
-      const paintBuffer = gl.createBuffer()!;
-      gl.uniformBlockBinding(program, paintBlock, i + 1);
-      gl.bindBuffer(gl.UNIFORM_BUFFER, paintBuffer);
-      gl.bufferData(gl.UNIFORM_BUFFER, slots * 16, gl.DYNAMIC_DRAW);
-      return paintBuffer;
-    });
-    return { key, program, buffer, paints, extra };
-  }
-
   #draw(): void {
     const gl = this.#gl!;
-    const built = this.#built!;
-    const { width, height } = this.canvas;
-    gl.viewport(0, 0, width, height);
-    gl.useProgram(built.program);
     if (this.#media && this.#program.shader === "media") this.#media.bind(gl);
-    gl.bindBuffer(gl.UNIFORM_BUFFER, built.buffer);
-    gl.bindBufferBase(gl.UNIFORM_BUFFER, 0, built.buffer);
-    const values = this.#runtime.write(width, height);
-    gl.bufferSubData(gl.UNIFORM_BUFFER, 0, values.subarray(0, UNIFORM_PAGE * 4));
-    if (built.extra) {
-      gl.bindBuffer(gl.UNIFORM_BUFFER, built.extra);
-      gl.bindBufferBase(gl.UNIFORM_BUFFER, 12, built.extra);
-      gl.bufferSubData(gl.UNIFORM_BUFFER, 0, values.subarray(UNIFORM_PAGE * 4));
-    }
-    const colors = this.#runtime.paintData;
-    const changed = built.paintData !== colors;
-    for (let i = 0; i < built.paints.length; i++) {
-      const buffer = built.paints[i];
-      if (!buffer) continue;
-      gl.bindBuffer(gl.UNIFORM_BUFFER, buffer);
-      gl.bindBufferBase(gl.UNIFORM_BUFFER, i + 1, buffer);
-      const start = i * PAINT_PAGE * 4;
-      // Definitions change only on configuration edits; playback updates the state weights.
-      const length = changed
-        ? this.#program.paint!.pages[i]! * 4
-        : i === 0
-          ? Math.ceil(this.#program.paint!.states.length / 4) * 4
-          : 0;
-      if (length) gl.bufferSubData(gl.UNIFORM_BUFFER, 0, colors.subarray(start, start + length));
-    }
-    built.paintData = colors;
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    this.#orb!.draw(this.#runtime, this.canvas.width, this.canvas.height);
   }
 }
