@@ -18,7 +18,7 @@ import { orbShader } from "./shader";
 import { effectFrame } from "./frame";
 
 const compileColor = (color: ColorValue) =>
-  compileOrb({ halo: { amount: 1, color } as never, states: { idle: {} } });
+  compileOrb({ halo: { amount: 1, color }, states: { idle: {} } });
 
 const quiet = {
   rain: { enabled: false },
@@ -68,7 +68,7 @@ describe("spatial colors", () => {
             [1, "#abcdef"],
           ],
         },
-      } as never,
+      },
     });
     if (config.contents.type !== "sunset") throw new Error("sunset missing");
     expect(typeof config.contents.sky.color).toBe("object");
@@ -105,7 +105,7 @@ describe("spatial colors", () => {
   });
   it("keeps a solid-only program free of color buffers and shader work", () => {
     const program = compileOrb({
-      contents: { type: "gradient" } as never,
+      contents: { type: "gradient" },
       weather: quiet,
       states: { idle: {} },
     });
@@ -118,7 +118,7 @@ describe("spatial colors", () => {
   });
   it("blends complete fields through interrupted transitions without mutating definitions", () => {
     const program = compileOrb({
-      halo: { amount: 1, color: gradientColor("mesh") } as never,
+      halo: { amount: 1, color: gradientColor("mesh") },
       states: {
         idle: {},
         warm: { halo: { color: gradientColor("radial") } },

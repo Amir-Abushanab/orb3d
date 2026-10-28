@@ -205,6 +205,27 @@ export type OrbContents =
 
 export type ContentsType = OrbContents["type"];
 
+/**
+ * A block as a config input takes it: every key optional, nested blocks too, since what is left
+ * out comes from the defaults (or the config it is merged over). Arrays and colours are values,
+ * replaced whole, so they stay complete.
+ */
+export type ConfigPatch<T> = { [K in keyof T]?: PatchValue<T[K]> };
+type PatchValue<V> = V extends readonly unknown[]
+  ? V
+  : V extends ColorValue
+    ? V
+    : V extends object
+      ? ConfigPatch<V>
+      : V;
+
+/**
+ * Contents as a config input takes them: `{ type: "image", src: "/avatar.jpg" }`, with the rest
+ * from that kind's defaults. Without a `type`, the keys merge into the contents already there.
+ */
+export type OrbContentsInput = PatchEach<OrbContents>;
+type PatchEach<C> = C extends unknown ? ConfigPatch<C> : never;
+
 /** The shader each kind is drawn with; a picture and a clip share one. */
 export type ContentsShader =
   | "none"
