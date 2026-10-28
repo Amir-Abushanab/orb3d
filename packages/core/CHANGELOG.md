@@ -1,5 +1,17 @@
 # @orb3d/core
 
+## 0.3.1
+
+### Patch Changes
+
+- [#13](https://github.com/Amir-Abushanab/orb3d/pull/13) [`d89a24a`](https://github.com/Amir-Abushanab/orb3d/commit/d89a24ae04edec0d6d9d752dd4cd3fbba1e25e48) Thanks [@Amir-Abushanab](https://github.com/Amir-Abushanab)! - `OrbConfigInput`, the type of every partial config (`ensureOrbConfig`, `compileOrb`, `createOrb`,
+  `setConfig` and the components' `config`), now takes every block partially, all the way down, as
+  the runtime already filled it out. The documented
+  `config={{ contents: { type: "image", src: "/avatar.jpg" }, glass: { frost: 0.15 } }}` failed to
+  type-check under strict TypeScript because `contents` and each block had to be complete. Arrays and
+  colours are still taken whole, and a value of the wrong kind (`fit: "fill"`) is still an error. The
+  new `OrbContentsInput` type names the contents part.
+
 ## 0.3.0
 
 ### Minor Changes
