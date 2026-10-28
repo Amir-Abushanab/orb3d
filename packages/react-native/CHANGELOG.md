@@ -1,5 +1,18 @@
 # @orb3d/react-native
 
+## 0.3.1
+
+### Patch Changes
+
+- [#13](https://github.com/Amir-Abushanab/orb3d/pull/13) [`871284d`](https://github.com/Amir-Abushanab/orb3d/commit/871284d56d88fd857350861ccab9f03827f3fe0e) Thanks [@Amir-Abushanab](https://github.com/Amir-Abushanab)! - Narrow the `react-native-skia` peer range from `>=3` to `>=3 <3.0.5`. Later 3.x releases remove
+  APIs the orb draws with (`useVideo` from 3.0.5, `Skia.Image.MakeImage` from 3.4.2, the `Canvas`'s
+  `onSize` from 3.5.0), so an app on the current Skia 3 got a package that could not run. With a newer
+  `react-native-skia` installed, the orb now throws a clear error naming the supported versions
+  instead of failing later with "useVideo is not a function". The install command in the docs pins
+  `react-native-skia@3.0.4`. `@shopify/react-native-skia` 2.x is unchanged.
+- Updated dependencies [[`d89a24a`](https://github.com/Amir-Abushanab/orb3d/commit/d89a24ae04edec0d6d9d752dd4cd3fbba1e25e48)]:
+  - @orb3d/core@0.3.1
+
 ## 0.3.0
 
 ### Patch Changes
