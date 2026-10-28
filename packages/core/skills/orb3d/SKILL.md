@@ -150,13 +150,14 @@ The same orb on every platform: one shader in three dialects (GLSL for WebGL2 an
 for React Native Skia, MSL for Metal) and one small runtime (springs, level, clocks, and the
 running rain's simulation).
 
-- React Native: `pnpm add @orb3d/react-native react-native-skia react-native-reanimated react-native-worklets`,
+- React Native: `pnpm add @orb3d/react-native react-native-skia@3.0.4 react-native-reanimated react-native-worklets`,
   then `<Orb3D preset="aura" state={state} style={{ width: 96, height: 96 }} />`. Props:
   `preset`, `config`, `program`, `source` (a picture as `useImage` takes it, a `require` included,
   or a clip's URI, instead of the contents' `src`), `state`, `level`, `paused`, `style`; a ref has
   `setLevel` and `setState`. The frame loop runs on the UI thread (Reanimated). It uses whichever React Native
-  Skia is installed: `react-native-skia` 3.x (Graphite: Vulkan on Android API 26+, needs a
-  development build) or `@shopify/react-native-skia` 2.x (what Expo Go ships).
+  Skia is installed: `react-native-skia` 3.0.0 to 3.0.4 (Graphite: Vulkan on Android API 26+, needs
+  a development build; later 3.x removed APIs it uses) or `@shopify/react-native-skia` 2.x (what
+  Expo Go ships).
 - Swift: `.package(url: "https://github.com/Amir-Abushanab/orb3d", from: "0.1.0")`, then
   `OrbView(preset: .aura, state: state, level: level)`; `media: .image(cgImage)` or `.url(url)`
   puts a picture or clip in it. `OrbMetalRenderer` drives an `MTKView`;

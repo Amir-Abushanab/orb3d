@@ -25,18 +25,27 @@ type SkiaModule = Pick<
 >;
 
 function load(): SkiaModule {
+  let skia3: SkiaModule | undefined;
   try {
-    return require("react-native-skia") as SkiaModule;
+    skia3 = require("react-native-skia") as SkiaModule;
   } catch {
     // not installed: try the 2.x name
   }
+  // 3.0.5 and later dropped useVideo (and then more the orb draws with): say so, rather than fail
+  // later with "useVideo is not a function".
+  if (skia3 && typeof skia3.useVideo !== "function") {
+    throw new Error(
+      "[orb3d] @orb3d/react-native runs on react-native-skia 3.0.0 to 3.0.4 (or @shopify/react-native-skia 2.x); the installed react-native-skia is newer: install react-native-skia@3.0.4",
+    );
+  }
+  if (skia3) return skia3;
   try {
     return require("@shopify/react-native-skia") as SkiaModule;
   } catch {
     // neither: say so below
   }
   throw new Error(
-    "[orb3d] @orb3d/react-native needs React Native Skia: install react-native-skia (3.x) or @shopify/react-native-skia (2.x)",
+    "[orb3d] @orb3d/react-native needs React Native Skia: install react-native-skia (3.0.0 to 3.0.4) or @shopify/react-native-skia (2.x)",
   );
 }
 
