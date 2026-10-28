@@ -15,6 +15,7 @@ export default defineConfig({
       "react-native",
       "@shopify/react-native-skia",
       "react-native-skia",
+      "react-native-webgpu",
       "react-native-reanimated",
       "react-native-worklets",
       "@orb3d/core",

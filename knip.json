@@ -16,7 +16,8 @@
       "project": ["src/**/*.ts"]
     },
     "packages/react-native": {
-      "project": ["src/**/*.{ts,tsx}"]
+      "project": ["src/**/*.{ts,tsx}"],
+      "ignoreDependencies": ["react-native-skia-3.0.4"]
     },
     "apps/studio": {
       "project": ["src/**/*.ts"]

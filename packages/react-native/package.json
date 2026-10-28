@@ -1,7 +1,7 @@
 {
   "name": "@orb3d/react-native",
   "version": "0.3.1",
-  "description": "Glass orb with states for React Native, drawn with React Native Skia (3.0 on Vulkan and Metal, or 2.x): the <Orb3D> component",
+  "description": "Glass orb with states for React Native, drawn with React Native Skia (3.x on Vulkan and Metal, or 2.x): the <Orb3D> component",
   "keywords": [
     "agent",
     "expo",
@@ -56,7 +56,9 @@
     "react": "^19.3.1",
     "react-native": "^0.87.1",
     "react-native-reanimated": "^4.7.1",
-    "react-native-skia": "3.0.2",
+    "react-native-skia": "3.7.2",
+    "react-native-skia-3.0.4": "npm:react-native-skia@3.0.4",
+    "react-native-webgpu": "0.17.0",
     "react-native-worklets": "^0.13.0"
   },
   "peerDependencies": {
@@ -64,7 +66,8 @@
     "react": ">=19",
     "react-native": ">=0.78",
     "react-native-reanimated": ">=4",
-    "react-native-skia": ">=3 <3.0.5",
+    "react-native-skia": ">=3 <4",
+    "react-native-webgpu": ">=0.11.1",
     "react-native-worklets": ">=0.7"
   },
   "peerDependenciesMeta": {
@@ -72,6 +75,9 @@
       "optional": true
     },
     "react-native-skia": {
+      "optional": true
+    },
+    "react-native-webgpu": {
       "optional": true
     }
   },

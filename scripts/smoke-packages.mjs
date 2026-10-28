@@ -26,11 +26,13 @@ const packages = readdirSync(join(root, "packages"))
   .map((dir) => ({ dir, ...JSON.parse(readFileSync(join(root, "packages", dir, "package.json"))) }))
   .filter((pkg) => !pkg.private);
 
-function linkPeer(modules, name, owner) {
+// `from` is the owner's dev dependency to link, when it is installed under another name (an alias
+// such as react-native-skia-3.0.4, which the consumer sees as react-native-skia).
+function linkPeer(modules, name, owner, from = name) {
   const target = join(modules, name);
   mkdirSync(resolve(target, ".."), { recursive: true });
   symlinkSync(
-    realpathSync(join(root, "packages", owner, "node_modules", name)),
+    realpathSync(join(root, "packages", owner, "node_modules", from)),
     target,
     "junction",
   );
@@ -148,18 +150,28 @@ export const element = Orb3DElement;
   );
   console.log("Packed web packages: exports, SSR imports and strict consumer types passed");
 
-  for (const skia of ["@shopify/react-native-skia", "react-native-skia"]) {
-    const { fixture, modules } = consumer(skia.startsWith("@") ? "skia2" : "skia3");
+  // Skia 2; the last 3.x with useVideo, onSize and MakeImage; and the current 3.x (the package's
+  // own dev dependency), which has none of them.
+  const skias = [
+    { fixture: "skia2", name: "@shopify/react-native-skia", from: "@shopify/react-native-skia" },
+    { fixture: "skia3.0.4", name: "react-native-skia", from: "react-native-skia-3.0.4" },
+    { fixture: "skia3", name: "react-native-skia", from: "react-native-skia" },
+  ];
+  for (const { fixture: dir, name: skia, from } of skias) {
+    const version = JSON.parse(
+      readFileSync(join(root, "packages/react-native/node_modules", from, "package.json")),
+    ).version;
+    const { fixture, modules } = consumer(dir);
     for (const peer of [
       "react",
       "@types/react",
       "react-native",
       "react-native-reanimated",
       "react-native-worklets",
-      skia,
     ]) {
       linkPeer(modules, peer, "react-native");
     }
+    linkPeer(modules, skia, "react-native", from);
     checkTypes(
       fixture,
       `import { createElement } from "react";
@@ -168,12 +180,13 @@ const sources: OrbSource[] = ["https://example.com/image.jpg", 1, new Uint8Array
   {uri: "asset.jpg", width: 10, height: 10}, {__esModule: true, default: 1}, null];
 export const component = createElement(Orb3D, { source: sources[0], preset: "aura" });
 export const picture = createElement(Orb3D, { config: { contents: { type: "image" } }, source: 1 });
+export const clip = createElement(Orb3D, { config: { contents: { type: "video", src: "file:///clip.mp4" } } });
 // @ts-expect-error Source must remain typed, rather than degrading to any.
 export const invalid: OrbSource = false;
 `,
       true,
     );
-    console.log(`Packed React Native package: strict types with only ${skia} passed`);
+    console.log(`Packed React Native package: strict types with only ${skia}@${version} passed`);
   }
 } finally {
   rmSync(scratch, { recursive: true, force: true });
