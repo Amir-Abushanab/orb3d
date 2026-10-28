@@ -4,15 +4,15 @@ A glass orb with states for React Native, drawn with React Native Skia. The same
 packages: one shader, compiled to Skia's dialect, and the same runtime, run on the UI thread.
 
 ```sh
-pnpm add @orb3d/react-native react-native-skia@3.0.4 react-native-reanimated react-native-worklets
+pnpm add @orb3d/react-native react-native-skia react-native-reanimated react-native-worklets
 ```
 
 It runs on either React Native Skia, and uses whichever the app has installed:
 
-- **Skia 3**, the `react-native-skia` package, 3.0.0 to 3.0.4: Graphite, on Vulkan on Android (API
-  26 and up) and Metal on iOS. It is native code, so it needs a development build, not Expo Go.
-  Later 3.x releases remove `useVideo`, `Skia.Image.MakeImage` and the `Canvas`'s `onSize`, which
-  this package draws with, so it does not run on them yet.
+- **Skia 3**, the `react-native-skia` package (tested from 3.0.0 to 3.7.2): Graphite, on Vulkan on
+  Android (API 26 and up) and Metal on iOS. It is native code, so it needs a development build, not
+  Expo Go. Skia 3 renames and removes APIs between minor releases; the package looks up the ones it
+  needs rather than assuming a version.
 - **Skia 2**, the `@shopify/react-native-skia` package: OpenGL ES on Android, Metal on iOS. This is
   the one Expo Go ships, so it is what runs there.
 
@@ -35,8 +35,24 @@ anything `useImage` takes, a `require`d asset included, or for a clip a local fi
 <Orb3D config={{ contents: { type: "video", src: "https://example.com/loop.mp4" } }} />
 ```
 
+A clip plays differently by Skia version:
+
+- **Skia 2 and `react-native-skia` 3.0.0 to 3.0.4** decode it themselves, with Skia's `useVideo`.
+- **`react-native-skia` 3.0.5 and later** left video to
+  [React Native WebGPU](https://wcandillon.github.io/react-native-webgpu/), an optional peer of this
+  package: install `react-native-webgpu` (0.11.1 or later; it needs React Native 0.81 and
+  Reanimated 4.2.1 or later). Its player decodes the clip, each frame is converted into a texture on
+  the GPU device Skia shares with it, and Skia samples that texture without a copy. Pick the
+  version paired with your Skia, since the two share one copy of Dawn: see the
+  [compatibility table](https://wcandillon.github.io/react-native-skia/docs/webgpu). Without it,
+  video contents throw an error naming it; every other kind of contents runs without it.
+
+```sh
+pnpm add react-native-webgpu
+```
+
 A picture is drawn through a child image shader, scaled toward the orb's size so Skia samples a
-mipmap; a clip through Skia's `useVideo`. A shader of your own is compiled to SkSL on the device; if
+mipmap. A shader of your own is compiled to SkSL on the device; if
 it does not compile there, the orb shows clear glass and warns.
 
 The frame loop runs on the UI thread through Reanimated, so a busy JS thread does not stall it. For
@@ -57,6 +73,7 @@ Under Reduce Motion it holds a still frame and cuts between states. The worklets
 Expo configures for you, turns the runtime in `@orb3d/core` into UI-thread code.
 
 Metro reads this package from its source (the `react-native` condition), because the choice
-between the two Skia packages is an optional `require` that Metro has to see as written.
+between the two Skia packages, like React Native WebGPU, is an optional `require` that Metro has to
+see as written.
 TypeScript reads the built declarations first. The public `OrbSource` type describes the
 image sources shared by both Skia versions, so either installation typechecks on its own.

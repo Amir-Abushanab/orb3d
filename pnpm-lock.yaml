@@ -310,8 +310,14 @@ importers:
         specifier: ^4.7.1
         version: 4.7.1(react-native-worklets@0.13.0(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(react-native@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.1)(supports-color@8.1.1))(react@19.3.1)(supports-color@8.1.1))(react-native@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.1)(supports-color@8.1.1))(react@19.3.1)
       react-native-skia:
-        specifier: 3.0.2
-        version: 3.0.2(dd1d166bfe30c17951441b10abc3ace7)
+        specifier: 3.7.2
+        version: 3.7.2(dd1d166bfe30c17951441b10abc3ace7)
+      react-native-skia-3.0.4:
+        specifier: npm:react-native-skia@3.0.4
+        version: react-native-skia@3.0.4(dd1d166bfe30c17951441b10abc3ace7)
+      react-native-webgpu:
+        specifier: 0.17.0
+        version: 0.17.0(dd1d166bfe30c17951441b10abc3ace7)
       react-native-worklets:
         specifier: ^0.13.0
         version: 0.13.0(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(react-native@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.1)(supports-color@8.1.1))(react@19.3.1)(supports-color@8.1.1)
@@ -1742,6 +1748,9 @@ packages:
   canvaskit-wasm@0.41.0:
     resolution: {integrity: sha512-cnbL02NFB3yOYMF/MtxViZHgD1vh55Pvy+zR8q4JuFvyCPejZP3eClkt2GuZ0S7jOmGMCJXaHBasbMChbR9JZg==}
 
+  canvaskit-wasm@0.41.1:
+    resolution: {integrity: sha512-gO2rNMIE0lOQ8MaarM4qNeq2zZAEknAObKP2XAKidMSAY8P5sURGdFkrx1TSdHuBFqTf5w35JqjuUzjibqkD5g==}
+
   canvaskit-wasm@0.42.0:
     resolution: {integrity: sha512-N3ikotmzYwDVAcpQKDMptBT2P5pIEWS9ywdmrQA2awwaMF9cxKEFuxZZHv9ay1Em9kDjxDsPtwUzDm1uNj136g==}
 
@@ -2517,14 +2526,26 @@ packages:
   react-native-skia-graphite-android@154.0.1:
     resolution: {integrity: sha512-22sqPJHe/ljcKBD2Ow7vHPiv+clf9Esz7DzL7X0nn2zQXthRXcjU2UQg0P5rx8jNoAJO7CigMtDYaxxNfTWyAA==}
 
+  react-native-skia-graphite-android@157.0.0:
+    resolution: {integrity: sha512-/FFq+Lw7xBk2cQVRwp49NZCbn71tUxdIYAQjbbcfGH6n+HODEgSbw4VRcGzH5L6VgbFOR7Ee+an1/VvExoSVbg==}
+
   react-native-skia-graphite-apple-ios@154.0.1:
     resolution: {integrity: sha512-KvPzw0icwyUvuZM1zhnXv2MPrrPIDJRD9bDrgFq65WzcimB0upf3Vkr4wchxulHkHdGHfqdO6qtCQuL0IRx21A==}
+
+  react-native-skia-graphite-apple-ios@157.0.0:
+    resolution: {integrity: sha512-5QWJOWQD+NdGt7ANfuWIOxKasyeglJVuBLFEKoBkaiaSYF7/uUv9hJQMtLXGyCxGNHeithnA+EqdS4/1eC89MA==}
 
   react-native-skia-graphite-apple-macos@154.0.1:
     resolution: {integrity: sha512-+B6UtcqXM7jNVn7fB0g2z954nf4kp7DFifkyz8i2b0yprDa051KPl5o/vZG9dnKHR5pFmZAtYLV1dxl0iLTYkA==}
 
-  react-native-skia@3.0.2:
-    resolution: {integrity: sha512-uEPs/PG38JtuBGgfJ9D4vlqKnYaFsKyC5g9YG1I7DwK6kkb5uB8MnRPqpTMiPpit1Lroe7kvpySsnDGLYBzpSw==}
+  react-native-skia-graphite-apple-macos@157.0.0:
+    resolution: {integrity: sha512-dqyfEa2cJVELKv/GFLa7VqsJiY5RQ9DSjSQRv6K3vz2czRykqleYet0GObG+yP3MNtv5A7cY4AuUo0+9XoZUPw==}
+
+  react-native-skia-graphite-apple-tvos@157.0.0:
+    resolution: {integrity: sha512-LscPAAl3UruSIDnRBDc4WLCjoWeZ4EZs8bumae9IT/lPEhHkgDHMHu1OayDzgjCdZuNj+ex4RE0RtXvEMhz5Qw==}
+
+  react-native-skia@3.0.4:
+    resolution: {integrity: sha512-6o2H3wZygizzsAGRef6K1IZq6boiFB9nk6r0we63uV7cfVzpa7HeG3q/zMlKG0S5d2IKVjElGxilfX/BTHxBMQ==}
     hasBin: true
     peerDependencies:
       react: '>=19.0'
@@ -2534,6 +2555,38 @@ packages:
     peerDependenciesMeta:
       react-native:
         optional: true
+      react-native-reanimated:
+        optional: true
+      react-native-worklets:
+        optional: true
+
+  react-native-skia@3.7.2:
+    resolution: {integrity: sha512-HiR2jpr0TyAp4rhNrUzPHXlWpeCUkmms+lYXRD0UFwIV+4ejs8fx+wZiurIgCM8ysupwPYKIoEOvJ2WKqw8vxg==}
+    hasBin: true
+    peerDependencies:
+      react: '>=19.0'
+      react-native: '>=0.79'
+      react-native-reanimated: '>=4.0.0'
+      react-native-worklets: '>=0.7.0'
+    peerDependenciesMeta:
+      react-native:
+        optional: true
+      react-native-reanimated:
+        optional: true
+      react-native-worklets:
+        optional: true
+
+  react-native-webgpu-dawn@157.0.0:
+    resolution: {integrity: sha512-HRquN2/995ZvcxiKDTiCwk3CduOYg9g3AK4yyoPrfMt5qUBbS6SefCpXE5mksvY4YaFrj2PqrtUuY2K1NkXsmQ==}
+
+  react-native-webgpu@0.17.0:
+    resolution: {integrity: sha512-9fCLyyvKObxLJOa2IHF5cxWKD9KHUC5TpecDBy5QyBK30ZgXx1Yeq679Sqo6xDS7dC4OYoKR7n5dYWU3E9zN9A==}
+    peerDependencies:
+      react: '*'
+      react-native: '>=0.81.0'
+      react-native-reanimated: '>=4.2.1'
+      react-native-worklets: '>=0.7.2'
+    peerDependenciesMeta:
       react-native-reanimated:
         optional: true
       react-native-worklets:
@@ -4402,6 +4455,10 @@ snapshots:
     dependencies:
       '@webgpu/types': 0.1.21
 
+  canvaskit-wasm@0.41.1:
+    dependencies:
+      '@webgpu/types': 0.1.21
+
   canvaskit-wasm@0.42.0:
     dependencies:
       '@webgpu/types': 0.1.21
@@ -5255,11 +5312,19 @@ snapshots:
 
   react-native-skia-graphite-android@154.0.1: {}
 
+  react-native-skia-graphite-android@157.0.0: {}
+
   react-native-skia-graphite-apple-ios@154.0.1: {}
+
+  react-native-skia-graphite-apple-ios@157.0.0: {}
 
   react-native-skia-graphite-apple-macos@154.0.1: {}
 
-  react-native-skia@3.0.2(dd1d166bfe30c17951441b10abc3ace7):
+  react-native-skia-graphite-apple-macos@157.0.0: {}
+
+  react-native-skia-graphite-apple-tvos@157.0.0: {}
+
+  react-native-skia@3.0.4(dd1d166bfe30c17951441b10abc3ace7):
     dependencies:
       canvaskit-wasm: 0.41.0
       react: 19.3.1
@@ -5269,6 +5334,32 @@ snapshots:
       react-reconciler: 0.31.0(react@19.3.1)
     optionalDependencies:
       react-native: 0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.1)(supports-color@8.1.1)
+      react-native-reanimated: 4.7.1(react-native-worklets@0.13.0(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(react-native@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.1)(supports-color@8.1.1))(react@19.3.1)(supports-color@8.1.1))(react-native@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.1)(supports-color@8.1.1))(react@19.3.1)
+      react-native-worklets: 0.13.0(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(react-native@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.1)(supports-color@8.1.1))(react@19.3.1)(supports-color@8.1.1)
+
+  react-native-skia@3.7.2(dd1d166bfe30c17951441b10abc3ace7):
+    dependencies:
+      canvaskit-wasm: 0.41.1
+      react: 19.3.1
+      react-native-skia-graphite-android: 157.0.0
+      react-native-skia-graphite-apple-ios: 157.0.0
+      react-native-skia-graphite-apple-macos: 157.0.0
+      react-native-skia-graphite-apple-tvos: 157.0.0
+      react-native-webgpu-dawn: 157.0.0
+      react-reconciler: 0.31.0(react@19.3.1)
+    optionalDependencies:
+      react-native: 0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.1)(supports-color@8.1.1)
+      react-native-reanimated: 4.7.1(react-native-worklets@0.13.0(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(react-native@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.1)(supports-color@8.1.1))(react@19.3.1)(supports-color@8.1.1))(react-native@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.1)(supports-color@8.1.1))(react@19.3.1)
+      react-native-worklets: 0.13.0(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(react-native@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.1)(supports-color@8.1.1))(react@19.3.1)(supports-color@8.1.1)
+
+  react-native-webgpu-dawn@157.0.0: {}
+
+  react-native-webgpu@0.17.0(dd1d166bfe30c17951441b10abc3ace7):
+    dependencies:
+      react: 19.3.1
+      react-native: 0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.1)(supports-color@8.1.1)
+      react-native-webgpu-dawn: 157.0.0
+    optionalDependencies:
       react-native-reanimated: 4.7.1(react-native-worklets@0.13.0(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(react-native@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.1)(supports-color@8.1.1))(react@19.3.1)(supports-color@8.1.1))(react-native@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.1)(supports-color@8.1.1))(react@19.3.1)
       react-native-worklets: 0.13.0(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(react-native@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.3.0)(react@19.3.1)(supports-color@8.1.1))(react@19.3.1)(supports-color@8.1.1)
 

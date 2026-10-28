@@ -25,14 +25,22 @@ import {
   MipmapMode,
   Shader,
   Skia,
+  makeRasterImage,
   useImage,
-  useVideo,
   type SkImage,
   type SkRuntimeEffect,
 } from "./skia";
+import { useVideo } from "./video";
 import { forwardRef, useEffect, useImperativeHandle, useMemo } from "react";
 import type { ForwardedRef, ReactElement } from "react";
-import { PixelRatio, type StyleProp, type ViewStyle } from "react-native";
+import {
+  PixelRatio,
+  StyleSheet,
+  View,
+  type LayoutChangeEvent,
+  type StyleProp,
+  type ViewStyle,
+} from "react-native";
 import {
   useAnimatedReaction,
   useDerivedValue,
@@ -62,6 +70,8 @@ export interface Orb3DProps {
   /**
    * The picture or clip for image or video contents, instead of their `src`: for a picture,
    * anything `useImage` takes (a `require`d asset, a URL); for a clip, a URL or a local file URI.
+   * On react-native-skia 3.0.5 and later, a clip plays through react-native-webgpu, which has to be
+   * installed.
    */
   source?: OrbSource;
   /** The state to show. Changing it springs the orb there. */
@@ -97,7 +107,7 @@ function compile(props: Orb3DProps): OrbProgram {
 /** A transparent pixel, for the picture's place in the shader before one has loaded. Made on the
  *  JS thread, then handed to the UI thread's worklets. */
 function blankImage(): SkImage {
-  const image = Skia.Image.MakeImage(
+  const image = makeRasterImage(
     { width: 1, height: 1, alphaType: AlphaType.Premul, colorType: ColorType.RGBA_8888 },
     Skia.Data.fromBytes(new Uint8Array(4)),
     4,
@@ -244,22 +254,31 @@ function Orb3DInner(props: Orb3DProps, ref: ForwardedRef<Orb3DHandle>): ReactEle
     },
   );
 
+  // The size comes from a view around the canvas: Skia 3.5 removed the canvas's `onSize`, and
+  // before that, Skia logs an error for an `onLayout` on the canvas itself.
+  const onLayout = (event: LayoutChangeEvent): void => {
+    const { width, height } = event.nativeEvent.layout;
+    if (size.value.width !== width || size.value.height !== height) size.value = { width, height };
+  };
+
   return (
-    <Canvas style={props.style} onSize={size}>
-      <Fill>
-        <Shader source={effect} uniforms={uniforms}>
-          {program.shader === "media" ? (
-            <ImageShader
-              image={picture}
-              transform={pictureTransform}
-              tx="clamp"
-              ty="clamp"
-              sampling={{ filter: FilterMode.Linear, mipmap: MipmapMode.Linear }}
-            />
-          ) : null}
-        </Shader>
-      </Fill>
-    </Canvas>
+    <View style={props.style} onLayout={onLayout}>
+      <Canvas style={StyleSheet.absoluteFill}>
+        <Fill>
+          <Shader source={effect} uniforms={uniforms}>
+            {program.shader === "media" ? (
+              <ImageShader
+                image={picture}
+                transform={pictureTransform}
+                tx="clamp"
+                ty="clamp"
+                sampling={{ filter: FilterMode.Linear, mipmap: MipmapMode.Linear }}
+              />
+            ) : null}
+          </Shader>
+        </Fill>
+      </Canvas>
+    </View>
   );
 }
 

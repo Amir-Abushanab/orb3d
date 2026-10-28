@@ -164,7 +164,11 @@ orb.setState("thinking"); // springs there
 orb.setLevel(0.6); // 0 to 1: drives the state's react amounts
 `;
     case "react-native":
-      return `// pnpm add @orb3d/react-native react-native-skia@3.0.4 react-native-reanimated react-native-worklets
+      return `// pnpm add @orb3d/react-native react-native-skia react-native-reanimated react-native-worklets${
+        config.contents.type === "video"
+          ? "\n// The clip plays through React Native WebGPU on react-native-skia 3.0.5 and later:\n// pnpm add react-native-webgpu (the version paired with your Skia)"
+          : ""
+      }
 // (In Expo Go, which ships React Native Skia 2, it uses @shopify/react-native-skia instead.)
 import { Orb3D } from "@orb3d/react-native";
 

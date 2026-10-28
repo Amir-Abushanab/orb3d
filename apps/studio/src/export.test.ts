@@ -91,6 +91,14 @@ describe("exportCode", () => {
     expect(code).not.toContain("clouds");
   });
 
+  it("installs react-native-webgpu for React Native only when the contents are a clip", () => {
+    const picture = exportCode("react-native", PRESETS.aura(), "aura");
+    expect(picture).toMatch(/^\/\/ pnpm add @orb3d\/react-native react-native-skia react-native-/);
+    expect(picture).not.toContain("webgpu");
+    const clip = ensureOrbConfig({ contents: { type: "video", src: "https://example.com/a.mp4" } });
+    expect(exportCode("react-native", clip, "custom")).toContain("// pnpm add react-native-webgpu");
+  });
+
   it("swaps a file from this computer for a placeholder, and says so", () => {
     const config = ensureOrbConfig({
       contents: { type: "image", src: "data:image/png;base64,AAAA" },

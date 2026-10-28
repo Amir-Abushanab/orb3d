@@ -72,14 +72,14 @@ Weather can also follow observations from your app through `setWeather()`. The [
 
 ## Use it anywhere
 
-| Platform                   | Integration                                          | Renderer                   |
-| -------------------------- | ---------------------------------------------------- | -------------------------- |
-| React                      | [@orb3d/react](packages/react)                       | WebGL2                     |
-| Vue, Svelte or plain HTML  | [@orb3d/element](packages/element), `<orb-3d>`       | WebGL2                     |
-| JavaScript or a CDN script | [@orb3d/core](packages/core)                         | WebGL2                     |
-| React Native or Expo       | [@orb3d/react-native](packages/react-native)         | React Native Skia 2 or 3.0 |
-| SwiftUI, UIKit or AppKit   | [Orb3D Swift package](native/apple)                  | Metal                      |
-| Android views or Compose   | [Android source / local AAR preview](native/android) | GLES 3.0                   |
+| Platform                   | Integration                                          | Renderer                 |
+| -------------------------- | ---------------------------------------------------- | ------------------------ |
+| React                      | [@orb3d/react](packages/react)                       | WebGL2                   |
+| Vue, Svelte or plain HTML  | [@orb3d/element](packages/element), `<orb-3d>`       | WebGL2                   |
+| JavaScript or a CDN script | [@orb3d/core](packages/core)                         | WebGL2                   |
+| React Native or Expo       | [@orb3d/react-native](packages/react-native)         | React Native Skia 2 or 3 |
+| SwiftUI, UIKit or AppKit   | [Orb3D Swift package](native/apple)                  | Metal                    |
+| Android views or Compose   | [Android source / local AAR preview](native/android) | GLES 3.0                 |
 
 The same shader and configuration power every renderer. Native apps use the compiled program exported by Studio; images and videos use each platform’s media loader.
 
