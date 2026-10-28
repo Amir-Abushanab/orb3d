@@ -11,11 +11,6 @@ packages:
 allowBuilds:
   playwright: true
 
-# pnpm holds back releases younger than its minimum release age; React Native Skia 3 shipped on
-# 2026-10-02, and @orb3d/react-native is checked against it.
-minimumReleaseAgeExclude:
-  - react-native-skia@3.0.2
-
 # tweakpane 4 ships types that re-export @tweakpane/core but doesn't declare it as a dependency.
 # Declare it as a peer so pnpm nests @tweakpane/core under tweakpane and the Pane types
 # (addFolder/refresh/binding events) stay resolvable. The studio provides it as a devDependency.

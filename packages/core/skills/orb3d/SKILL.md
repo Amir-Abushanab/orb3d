@@ -130,7 +130,7 @@ All color dials accept a hex string or `GradientColor` from `gradientColor("line
   `contain`), `zoom`, `x`, `y`, `angle`, `spin`, `pulse`. Cross-origin pictures need CORS on the
   web. Clips play muted and looping.
 - `shader`: `code` defining `vec4 contents(vec2 p, float time, float level, vec4 knobs, vec3
-color1, vec3 color2)` (straight alpha; `p` from -1 to 1, y up), plus `knobs` (four, 0 to 1),
+  color1, vec3 color2)` (straight alpha; `p` from -1 to 1, y up), plus `knobs` (four, 0 to 1),
   `color1`, `color2`, all dials. Keep to what GLSL ES 1.0, SkSL and Metal share: constant loop
   bounds, no textures or derivatives, no names GLSL builds in. A shader that does not compile
   leaves clear glass (`renderer.shaderError`, the `onShaderError` option).

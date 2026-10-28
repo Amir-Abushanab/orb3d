@@ -38,7 +38,9 @@ describe("weather observations", () => {
     expect(legible.weather?.hail?.amount).toBeGreaterThanOrEqual(0.65);
     expect(plain.weather?.air?.amount).toBe(0.22);
     expect(legible.weather?.air?.amount).toBe(1);
-    expect(weatherState({}, { legible: true })).toEqual(weatherState({}));
+    // One time for both: left out, each call reads Date.now(), and the moon moves between them.
+    const dry = { time: Date.UTC(2026, 9, 1) };
+    expect(weatherState(dry, { legible: true })).toEqual(weatherState(dry));
   });
   it("melts according to glass temperature and condenses below dew point", () => {
     const cold = weatherState(
