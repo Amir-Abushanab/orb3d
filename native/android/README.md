@@ -47,7 +47,7 @@ fun AgentOrb(state: String, modifier: Modifier = Modifier.size(96.dp)) {
 - A design from Orb Studio: `OrbProgram.fromJson(assets.open("orb.program.json").bufferedReader().readText())`.
   A shader of your own travels in its program; the built-in kinds' shaders are in the library.
 - A picture or clip: the program's `src` (a URL, or a file in the app's assets), or `orb.image =
-bitmap` / `orb.video = uri` in its place. Pictures are uploaded with mipmaps; clips play muted and
+  bitmap` / `orb.video = uri` in its place. Pictures are uploaded with mipmaps; clips play muted and
   looping through MediaPlayer into a SurfaceTexture.
 - `OrbSnapshot.bitmap(program, state, time, level, size, image)` draws a still off the main thread.
 - minSdk 21. No dependencies.
