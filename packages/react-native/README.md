@@ -4,13 +4,15 @@ A glass orb with states for React Native, drawn with React Native Skia. The same
 packages: one shader, compiled to Skia's dialect, and the same runtime, run on the UI thread.
 
 ```sh
-pnpm add @orb3d/react-native react-native-skia react-native-reanimated react-native-worklets
+pnpm add @orb3d/react-native react-native-skia@3.0.4 react-native-reanimated react-native-worklets
 ```
 
 It runs on either React Native Skia, and uses whichever the app has installed:
 
-- **Skia 3**, the `react-native-skia` package: Graphite, on Vulkan on Android (API 26 and up) and
-  Metal on iOS. It is native code, so it needs a development build, not Expo Go.
+- **Skia 3**, the `react-native-skia` package, 3.0.0 to 3.0.4: Graphite, on Vulkan on Android (API
+  26 and up) and Metal on iOS. It is native code, so it needs a development build, not Expo Go.
+  Later 3.x releases remove `useVideo`, `Skia.Image.MakeImage` and the `Canvas`'s `onSize`, which
+  this package draws with, so it does not run on them yet.
 - **Skia 2**, the `@shopify/react-native-skia` package: OpenGL ES on Android, Metal on iOS. This is
   the one Expo Go ships, so it is what runs there.
 

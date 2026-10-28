@@ -41,8 +41,8 @@ const windRuntime = (shared: boolean) =>
 describe("shared weather config", () => {
   it("migrates old config/state paths and exports a single weather object", () => {
     const config = ensureOrbConfig({
-      rain: { amount: 0.8, direction: 25, lens: 0.7, shade: "#123456" } as never,
-      react: { rain: 0.9, snow: 0.4 } as never,
+      rain: { amount: 0.8, direction: 25, lens: 0.7, shade: "#123456" },
+      react: { rain: 0.9, snow: 0.4 },
       states: { windy: { rain: { direction: -30 }, react: { fog: 0.6 } } },
     });
     expect(config.weather.gravity).toBe(25);
@@ -65,9 +65,7 @@ describe("shared weather config", () => {
     expect(merged.weather.gravity).toBe(18);
     expect(merged.weather.rain.density).toBe(0.5);
     expect(merged.weather.snow.enabled).toBe(false);
-    const legacy = ensureOrbConfig(
-      mergeOrbConfig(merged, { rain: { direction: -12, run: 1.3 } as never }),
-    );
+    const legacy = ensureOrbConfig(mergeOrbConfig(merged, { rain: { direction: -12, run: 1.3 } }));
     expect(legacy.weather.gravity).toBe(-12);
     expect(legacy.weather.wind).toBe(24);
     expect(legacy.weather.rain.run).toBe(1.3);
@@ -338,7 +336,7 @@ vec4 contents(vec2 p, float t, float l, vec4 k, vec3 a, vec3 b) { return vec4(ve
       compileOrb({
         weather: off,
         states: { idle: {} },
-        contents: { type: "shader", code } as never,
+        contents: { type: "shader", code },
       }),
     );
     expect(shader).toContain(code);
@@ -353,7 +351,7 @@ vec4 contents(vec2 p, float t, float l, vec4 k, vec3 a, vec3 b) { return vec4(ve
       contents: {
         type: "shader",
         code: "vec4 contents(vec2 p, float t, float l, vec4 k, vec3 a, vec3 b) { return vec4(vec3(fbm(p, 3)), 1.0); }",
-      } as never,
+      },
     });
     expect(orbShader("glsl", program)).toContain("float fbm(");
     expect(dialLayout("none").contentsOffset).toBe(156);

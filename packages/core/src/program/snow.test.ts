@@ -7,7 +7,7 @@ import { createSnow, snowTo, type SnowData } from "./snow";
 
 function fixture(snow: Record<string, number> = {}) {
   const program = compileOrb(
-    ensureOrbConfig({ snow: { amount: 1, ...snow } as never, states: { idle: {} } }),
+    ensureOrbConfig({ snow: { amount: 1, ...snow }, states: { idle: {} } }),
   );
   return { program, dials: program.states.idle!.dials, snow: createSnow() };
 }
@@ -183,7 +183,7 @@ describe("snow on glass", () => {
     fine.restore(snap);
     expect(Array.from(fine.write(128, 128))).toEqual(uniforms);
     const before = fine.snapshot().snow;
-    fine.setProgram(compileOrb(ensureOrbConfig({ snow: { amount: 1, melt: 0.8 } as never })));
+    fine.setProgram(compileOrb(ensureOrbConfig({ snow: { amount: 1, melt: 0.8 } })));
     expect(fine.snapshot().snow).toEqual(before);
   });
 });

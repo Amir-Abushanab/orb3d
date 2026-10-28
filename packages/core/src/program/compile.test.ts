@@ -35,11 +35,11 @@ describe("compileOrb", () => {
   });
 
   it("carries a picture's source, a shader's code, and shaders when asked", () => {
-    const image = compileOrb({ contents: { type: "image", src: "a.jpg" } as never });
+    const image = compileOrb({ contents: { type: "image", src: "a.jpg" } });
     expect(image.media).toEqual({ src: "a.jpg", kind: "image" });
     expect(image.shader).toBe("media");
     const custom = compileOrb(
-      { contents: { type: "shader", code: "// mine" } as never },
+      { contents: { type: "shader", code: "// mine" } },
       {
         shaders: ["msl", "glsl"],
       },
@@ -81,7 +81,7 @@ describe("the runtime's clocks", () => {
   });
 
   it("writes the picture's size once it has loaded", () => {
-    const runtime = new OrbRuntime(compileOrb({ contents: { type: "image" } as never }));
+    const runtime = new OrbRuntime(compileOrb({ contents: { type: "image" } }));
     expect(runtime.write(10, 10)[14]).toBe(0);
     runtime.setMedia(640, 480);
     const data = runtime.write(10, 10);

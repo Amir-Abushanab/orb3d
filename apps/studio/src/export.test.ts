@@ -41,7 +41,7 @@ describe("diffConfig", () => {
     const base = PRESETS.clear();
     const edited = ensureOrbConfig({
       ...base,
-      contents: { type: "gradient", flow: 1 } as never,
+      contents: { type: "gradient", flow: 1 },
     });
     const diff = diffConfig(base, edited);
     expect(diff.contents).toEqual({ type: "gradient", flow: 1 });
@@ -93,7 +93,7 @@ describe("exportCode", () => {
 
   it("swaps a file from this computer for a placeholder, and says so", () => {
     const config = ensureOrbConfig({
-      contents: { type: "image", src: "data:image/png;base64,AAAA" } as never,
+      contents: { type: "image", src: "data:image/png;base64,AAAA" },
     });
     const code = exportCode("react", config, "custom");
     expect(code).toContain("/your-image.jpg");
@@ -104,9 +104,7 @@ describe("exportCode", () => {
 
 describe("exportProgram", () => {
   it("carries a shader of your own for Metal and Android, and no other", () => {
-    const own = JSON.parse(
-      exportProgram(ensureOrbConfig({ contents: { type: "shader" } as never })),
-    );
+    const own = JSON.parse(exportProgram(ensureOrbConfig({ contents: { type: "shader" } })));
     expect(Object.keys(own.shaders)).toEqual(["msl", "glsl"]);
     expect(JSON.parse(exportProgram(PRESETS.aura())).shaders).toBeUndefined();
   });

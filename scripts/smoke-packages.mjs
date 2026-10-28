@@ -135,6 +135,12 @@ import { PRESETS } from "@orb3d/core/presets";
 import { Orb3D } from "@orb3d/react";
 import { Orb3DElement } from "@orb3d/element";
 export const component = createElement(Orb3D, { preset: "aura", level: 0.8 });
+// The documented partial config: the rest of the contents and the glass come from the defaults.
+export const picture = createElement(Orb3D, {
+  config: { contents: { type: "image", src: "/avatar.jpg" }, glass: { frost: 0.15 } },
+});
+// @ts-expect-error A partial config must still reject values its kind does not take.
+export const stretched = createElement(Orb3D, { config: { contents: { type: "image", fit: "fill" } } });
 export const program = compileOrb(PRESETS.aura());
 export const mount = createOrb;
 export const element = Orb3DElement;
@@ -161,6 +167,7 @@ import { Orb3D, type OrbSource } from "@orb3d/react-native";
 const sources: OrbSource[] = ["https://example.com/image.jpg", 1, new Uint8Array(4),
   {uri: "asset.jpg", width: 10, height: 10}, {__esModule: true, default: 1}, null];
 export const component = createElement(Orb3D, { source: sources[0], preset: "aura" });
+export const picture = createElement(Orb3D, { config: { contents: { type: "image" } }, source: 1 });
 // @ts-expect-error Source must remain typed, rather than degrading to any.
 export const invalid: OrbSource = false;
 `,

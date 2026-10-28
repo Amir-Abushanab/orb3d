@@ -38,9 +38,11 @@ import {
   contentsModel,
   skyStops,
   isContentsType,
+  type ConfigPatch,
   type ContentsOverride,
   type ContentsType,
   type OrbContents,
+  type OrbContentsInput,
 } from "./contents";
 import {
   channels,
@@ -359,7 +361,16 @@ export interface OrbConfig {
   paused: boolean;
 }
 
-export type OrbConfigInput = Omit<Partial<OrbConfig>, "weather"> & { weather?: WeatherInput };
+/**
+ * A config as every API that fills one out takes it (`ensureOrbConfig`, `compileOrb`, `createOrb`,
+ * the components' `config`): any part of an {@link OrbConfig}, each block partial, all the way
+ * down. What is left out comes from the defaults, or from the config it is merged over.
+ */
+export type OrbConfigInput = ConfigPatch<Omit<OrbConfig, "contents" | "weather" | "states">> & {
+  contents?: OrbContentsInput;
+  weather?: WeatherInput;
+  states?: Record<string, OrbStateOverride>;
+};
 
 /**
  * Hard caps on the glass's structure, because every array lands in a fixed-size uniform array.

@@ -38,7 +38,7 @@ describe("ensureOrbConfig", () => {
   });
 
   it.each(CONTENTS_TYPES)("fills %s contents out to their defaults", (type) => {
-    const config = ensureOrbConfig({ contents: { type } as OrbConfig["contents"] });
+    const config = ensureOrbConfig({ contents: { type } });
     expect(config.contents).toEqual(CONTENTS[type].defaults());
     expect(ensureOrbConfig(createContentsConfig(type))).toEqual(createContentsConfig(type));
   });
@@ -50,8 +50,8 @@ describe("ensureOrbConfig", () => {
 
   it("clamps dials to their range and normalises colours", () => {
     const config = ensureOrbConfig({
-      contents: { type: "sunset", sun: { glow: 99, color: "#abc" } } as never,
-      glass: { bend: -1, edgeColor: "not a colour" } as OrbConfig["glass"],
+      contents: { type: "sunset", sun: { glow: 99, color: "#abc" } },
+      glass: { bend: -1, edgeColor: "not a colour" },
     });
     const contents = config.contents as SunsetContents;
     expect(contents.sun.glow).toBe(3);
@@ -71,7 +71,7 @@ describe("ensureOrbConfig", () => {
             [0, "#ffffff"],
           ],
         },
-      } as never,
+      },
     });
     const { stops } = (config.contents as SunsetContents).sky;
     expect(stops).toHaveLength(SKY_STOPS);
@@ -109,13 +109,13 @@ describe("ensureOrbConfig", () => {
 
   it("keeps a picture's source and fit, and a shader's code within bounds", () => {
     const image = ensureOrbConfig({
-      contents: { type: "image", src: "a.jpg", fit: "contain" } as never,
+      contents: { type: "image", src: "a.jpg", fit: "contain" },
     });
     expect(image.contents).toMatchObject({ type: "image", src: "a.jpg", fit: "contain" });
-    const shader = ensureOrbConfig({ contents: { type: "shader", code: "vec4 x;" } as never });
+    const shader = ensureOrbConfig({ contents: { type: "shader", code: "vec4 x;" } });
     expect(shader.contents).toMatchObject({ code: "vec4 x;" });
     const long = ensureOrbConfig({
-      contents: { type: "shader", code: "x".repeat(SHADER_CODE_LIMIT + 1) } as never,
+      contents: { type: "shader", code: "x".repeat(SHADER_CODE_LIMIT + 1) },
     });
     expect(long.contents).toMatchObject({ code: CONTENTS.shader.defaults().code });
   });
@@ -131,7 +131,7 @@ describe("ensureOrbConfig", () => {
 
   it("sanitises state overrides like the base", () => {
     const config = ensureOrbConfig({
-      contents: { type: "sunset" } as never,
+      contents: { type: "sunset" },
       states: { thinking: { contents: { sun: { glow: -5 } }, duration: 0 } },
     });
     expect(config.states).toEqual({ thinking: { contents: { sun: { glow: 0 } }, duration: 0.05 } });
@@ -148,24 +148,29 @@ describe("ensureOrbConfig", () => {
 describe("mergeOrbConfig", () => {
   it("merges blocks all the way down and replaces arrays", () => {
     const base = sunset();
-    const merged = mergeOrbConfig(base, { contents: { sun: { glow: 2 } } } as never);
+    const merged = mergeOrbConfig(base, { contents: { sun: { glow: 2 } } });
     const contents = merged.contents as SunsetContents;
     expect(contents.sun).toEqual({ ...(base.contents as SunsetContents).sun, glow: 2 });
     expect(contents.sky).toEqual((base.contents as SunsetContents).sky);
-    const drops = mergeOrbConfig(base, { rain: { drops: [] } as unknown as OrbConfig["rain"] });
+    const drops = mergeOrbConfig(base, { rain: { drops: [] } });
     expect(drops.rain!.drops).toEqual([]);
     expect(drops.rain!.amount).toBe(base.rain.amount);
   });
 
   it("replaces contents of another kind outright", () => {
-    const merged = mergeOrbConfig(sunset(), { contents: { type: "image", src: "a.jpg" } } as never);
+    const merged = mergeOrbConfig(sunset(), { contents: { type: "image", src: "a.jpg" } });
     expect(merged.contents).toEqual({ type: "image", src: "a.jpg" });
+    // As the components do: what the partial contents leave out comes from the image defaults.
+    expect(ensureOrbConfig(merged).contents).toEqual({
+      ...CONTENTS.image.defaults(),
+      src: "a.jpg",
+    });
   });
 
   it("replaces states by name and removes a state set to null", () => {
     const base = createDefaultConfig();
     const merged = mergeOrbConfig(base, {
-      states: { thinking: { glass: { frost: 1 } }, muted: null, busy: { speed: 2 } } as never,
+      states: { thinking: { glass: { frost: 1 } }, muted: null, busy: { speed: 2 } },
     });
     expect(merged.states!.thinking).toEqual({ glass: { frost: 1 } });
     expect(merged.states!.muted).toBeUndefined();
@@ -233,7 +238,7 @@ describe("states", () => {
 describe("dials", () => {
   it("keeps legacy light incidence and packs elevation in the final reserved channel", () => {
     const config = ensureOrbConfig({
-      light: { x: -2, y: 1.6 } as OrbConfig["light"],
+      light: { x: -2, y: 1.6 },
       states: { elevated: { light: { x: 8, elevation: 120 } } },
     });
     expect(config.light).toMatchObject({ x: -2, y: 1.6, elevation: 0 });

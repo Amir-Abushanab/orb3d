@@ -7,7 +7,7 @@ import { CLEAR_UNDO_MS, History, describeChange } from "./history";
 const PICKED = `data:image/jpeg;base64,${"A".repeat(4000)}`;
 
 function picture(src: string, zoom: number): OrbConfig {
-  return ensureOrbConfig({ contents: { type: "image", src, zoom } as never });
+  return ensureOrbConfig({ contents: { type: "image", src, zoom } });
 }
 
 function timeline(live: () => OrbConfig): History {
