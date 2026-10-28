@@ -1,5 +1,12 @@
 # @orb3d/react
 
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`d89a24a`](https://github.com/Amir-Abushanab/orb3d/commit/d89a24ae04edec0d6d9d752dd4cd3fbba1e25e48)]:
+  - @orb3d/core@0.3.1
+
 ## 0.3.0
 
 ### Patch Changes
